@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 10thHoJayega
 
-## Getting Started
+10th ka syllabus. Sorted. Printed. Tracked. Ho jayega.
 
-First, run the development server:
+## Project Summary
+
+10thHoJayega is a Class 10 CBSE/NCERT syllabus tracker for students who need progress tracking, official NCERT links, focus blocks, and printable packs from their own account data.
+
+## Problem Solved
+
+Students can track syllabus progress in Supabase, then print a personalized checklist for revision and manual marking.
+
+## Main Features
+
+- Supabase email/password auth
+- Protected dashboard
+- Subject and chapter progress tracking
+- Hindi/French language subject preference
+- Maths exercise-level progress tracking
+- Private per-chapter notes
+- Focus mode with saved completed sessions
+- Official NCERT textbook links page
+- Printable planner
+- Printable Pack with only full syllabus checklist and Maths exercise tracker
+- Settings page with display name, JSON export, progress reset, and logout
+
+## Tech Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Supabase Auth
+- Supabase Postgres + RLS
+- `@supabase/ssr`
+- ESLint
+- Prettier
+
+## Screens and Routes
+
+- `/` landing page
+- `/login` login/signup
+- `/setup` Supabase setup help
+- `/dashboard` protected dashboard
+- `/subjects` subject list
+- `/subjects/[subjectId]` subject tracker
+- `/subjects/[subjectId]/chapters/[chapterId]` chapter detail and notes
+- `/focus` Pomodoro focus mode
+- `/textbooks` official NCERT/CBSE links
+- `/print` printable planner
+- `/printable-pack` Printable Pack
+- `/settings` account settings
+
+## Supabase Setup
+
+1. Create a Supabase project.
+2. Open Project Settings, then API.
+3. Copy the project URL.
+4. Copy the anon public key.
+5. Create `.env.local`.
+6. Add:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+7. Open Supabase SQL Editor.
+8. Run `supabase/schema.sql`.
+9. Run `supabase/seed.sql`.
+10. If upgrading an existing project, run `supabase/update-language-subject.sql`.
+11. Restart the dev server.
+12. Go to `/login` and create an account.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use `.env.example` as the template:
 
-## Learn More
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
 
-To learn more about Next.js, take a look at the following resources:
+Do not expose a Supabase service role key in this project.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Run Schema SQL
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open `supabase/schema.sql`, paste it into the Supabase SQL Editor, and run it. It creates tables, RLS policies, triggers, and grants.
 
-## Deploy on Vercel
+## Run Seed SQL
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open `supabase/seed.sql`, paste it into the Supabase SQL Editor, and run it. The seed data is sample data and must be verified against official CBSE/NCERT curriculum before production use.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For existing Supabase projects created before Hindi/French support, also run `supabase/update-language-subject.sql`. It adds the profile preference and French tracker rows without touching user progress.
+
+## Local Run Commands
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run build
+```
+
+Open `http://localhost:3000`.
+
+## Vercel Deployment
+
+1. Push this repo to GitHub.
+2. Import it in Vercel.
+3. Add these environment variables in Vercel Project Settings:
+   `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+4. Deploy.
+
+## GitHub Push Commands
+
+```bash
+git add .
+git commit -m "Build 10thHoJayega v1"
+git branch -M main
+git remote add origin <your-repo-url>
+git push -u origin main
+```
+
+## Legal Note About NCERT PDFs
+
+This project does not re-host NCERT textbooks. It links to official NCERT resources only.
+
+## Syllabus Accuracy Note
+
+Seed data is sample data and must be verified against official CBSE/NCERT curriculum before production use.
+
+## Known Limitations
+
+- Direct PDF generation is not included in V1; use browser Print / Save as PDF.
+- Seed data is intentionally incomplete sample data.
+- Email confirmation behavior depends on Supabase project auth settings.
+- No admin UI for editing syllabus rows yet.
+
+## Roadmap
+
+- Verified full syllabus import workflow
+- Admin-only syllabus editor
+- Chapter filters and search
+- Per-subject analytics
+- Optional direct server-side PDF export
+- Better session history for focus mode
