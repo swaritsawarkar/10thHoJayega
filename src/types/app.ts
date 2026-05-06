@@ -8,6 +8,8 @@ export type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Note = Database["public"]["Tables"]["notes"]["Row"];
 export type FocusSession =
   Database["public"]["Tables"]["focus_sessions"]["Row"];
+export type HomeworkHelpUsage =
+  Database["public"]["Tables"]["homework_help_usage"]["Row"];
 
 export type ProgressStatus = 0 | 1 | 2 | 3 | 4;
 export type ProgressItemType = "chapter" | "exercise";

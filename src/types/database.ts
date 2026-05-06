@@ -189,6 +189,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      homework_help_usage: {
+        Row: {
+          id: string;
+          user_id: string;
+          subject_id: string | null;
+          chapter_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          subject_id?: string | null;
+          chapter_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          subject_id?: string | null;
+          chapter_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

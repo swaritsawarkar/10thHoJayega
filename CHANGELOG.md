@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.0
+
+- AI Homework Help route
+- Gemini free-tier server API route
+- 10 questions/day usage limit
+- Subject/chapter context selectors
+- Supabase usage-count table with RLS
+- Setup docs for `GOOGLE_GENERATIVE_AI_API_KEY`
+
 ## v1.0.0
 
 - Supabase auth

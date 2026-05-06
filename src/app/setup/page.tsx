@@ -4,7 +4,8 @@ import { ThemeToggle } from "@/components/app/theme-toggle";
 import { Button } from "@/components/ui/button";
 
 const envBlock = `NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=`;
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+GOOGLE_GENERATIVE_AI_API_KEY=`;
 
 export default function SetupPage() {
   return (
@@ -48,6 +49,14 @@ export default function SetupPage() {
               If you already had the app running before Hindi/French support,
               run <code>supabase/update-language-subject.sql</code> once.
             </li>
+            <li>
+              Run <code>supabase/update-homework-help.sql</code> once if you
+              want the AI Homework Help daily limit.
+            </li>
+            <li>
+              Create a free Gemini API key in Google AI Studio and add it as{" "}
+              <code>GOOGLE_GENERATIVE_AI_API_KEY</code>.
+            </li>
             <li>Restart the dev server.</li>
             <li>
               Go to <code>/login</code> and create an account.
@@ -58,8 +67,9 @@ export default function SetupPage() {
         <section className="rounded-lg border bg-card p-5">
           <h2 className="text-2xl font-black">.env.local</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            These values let the browser use Supabase with the public anon key.
-            Never put a service role key in this app.
+            Supabase values let the browser use the public anon key. The Gemini
+            key is server-only because it does not start with{" "}
+            <code>NEXT_PUBLIC_</code>. Never put a service role key in this app.
           </p>
           <pre className="mt-4 overflow-x-auto rounded-md border bg-muted p-4 text-sm">
             <code>{envBlock}</code>
@@ -73,7 +83,9 @@ export default function SetupPage() {
             trigger, and updated_at trigger. <code>seed.sql</code> adds sample
             Class 10 subjects, chapters, and Maths exercises so the UI can be
             tested. The seed is sample only and must be verified against
-            official CBSE/NCERT curriculum before production.
+            official CBSE/NCERT curriculum before production.{" "}
+            <code>update-homework-help.sql</code> adds usage counting for the AI
+            helper without storing homework prompts or answers.
           </p>
         </section>
 

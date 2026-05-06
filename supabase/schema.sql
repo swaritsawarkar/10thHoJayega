@@ -98,6 +98,17 @@ create table if not exists public.focus_sessions (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.homework_help_usage (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  subject_id text references public.subjects(id) on delete set null,
+  chapter_id text references public.chapters(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists homework_help_usage_user_created_at_idx
+on public.homework_help_usage (user_id, created_at desc);
+
 create or replace function private.set_updated_at()
 returns trigger
 language plpgsql
@@ -166,6 +177,7 @@ alter table public.exercises enable row level security;
 alter table public.progress enable row level security;
 alter table public.notes enable row level security;
 alter table public.focus_sessions enable row level security;
+alter table public.homework_help_usage enable row level security;
 
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own"
@@ -261,6 +273,18 @@ on public.focus_sessions for delete
 to authenticated
 using (auth.uid() = user_id);
 
+drop policy if exists "homework_help_usage_select_own" on public.homework_help_usage;
+create policy "homework_help_usage_select_own"
+on public.homework_help_usage for select
+to authenticated
+using (auth.uid() = user_id);
+
+drop policy if exists "homework_help_usage_insert_own" on public.homework_help_usage;
+create policy "homework_help_usage_insert_own"
+on public.homework_help_usage for insert
+to authenticated
+with check (auth.uid() = user_id);
+
 drop policy if exists "subjects_read_authenticated" on public.subjects;
 create policy "subjects_read_authenticated"
 on public.subjects for select
@@ -282,5 +306,6 @@ using (true);
 grant usage on schema public to authenticated;
 grant select on public.subjects, public.chapters, public.exercises to authenticated;
 grant select, insert, update, delete on public.profiles, public.progress, public.notes, public.focus_sessions to authenticated;
+grant select, insert on public.homework_help_usage to authenticated;
 
 commit;

@@ -7,6 +7,7 @@ import {
   GaugeIcon,
   HomeIcon,
   LibraryIcon,
+  MessageCircleQuestionIcon,
   PrinterIcon,
   SettingsIcon,
   TimerIcon,
@@ -20,6 +21,11 @@ import { ThemeToggle } from "@/components/app/theme-toggle";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: HomeIcon },
   { href: "/subjects", label: "Subjects", icon: BookOpenIcon },
+  {
+    href: "/homework-help",
+    label: "Homework Help",
+    icon: MessageCircleQuestionIcon,
+  },
   { href: "/focus", label: "Focus", icon: TimerIcon },
   { href: "/textbooks", label: "Textbooks", icon: LibraryIcon },
   { href: "/print", label: "Print", icon: PrinterIcon },

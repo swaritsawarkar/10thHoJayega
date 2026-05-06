@@ -8,6 +8,7 @@ import {
   isSubjectVisibleForLanguage,
   type LanguageSubject,
 } from "@/lib/language-subject";
+import { getHomeworkHelpDayStartIso } from "@/lib/homework-help";
 import type {
   Chapter,
   Exercise,
@@ -62,6 +63,27 @@ export const getUserProgress = cache(
       progressResult,
       "Could not load progress",
     ) as UserProgress[];
+  },
+);
+
+export const getHomeworkHelpUsageCount = cache(
+  async (userId: string): Promise<number> => {
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error("Supabase is not configured.");
+    }
+
+    const { count, error } = await supabase
+      .from("homework_help_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", getHomeworkHelpDayStartIso());
+
+    if (error) {
+      throw new Error(`Could not load Homework Help usage: ${error.message}`);
+    }
+
+    return count ?? 0;
   },
 );
 

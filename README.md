@@ -19,6 +19,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - Maths exercise-level progress tracking
 - Private per-chapter notes
 - Focus mode with saved completed sessions
+- AI Homework Help with Gemini free tier and step-by-step tutor responses
 - Official NCERT textbook links page
 - Printable planner
 - Printable Pack with only full syllabus checklist and Maths exercise tracker
@@ -45,6 +46,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - `/subjects` subject list
 - `/subjects/[subjectId]` subject tracker
 - `/subjects/[subjectId]/chapters/[chapterId]` chapter detail and notes
+- `/homework-help` AI homework tutor
 - `/focus` Pomodoro focus mode
 - `/textbooks` official NCERT/CBSE links
 - `/print` printable planner
@@ -63,14 +65,16 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+GOOGLE_GENERATIVE_AI_API_KEY=
 ```
 
 7. Open Supabase SQL Editor.
 8. Run `supabase/schema.sql`.
 9. Run `supabase/seed.sql`.
 10. If upgrading an existing project, run `supabase/update-language-subject.sql`.
-11. Restart the dev server.
-12. Go to `/login` and create an account.
+11. Run `supabase/update-homework-help.sql` for AI usage counting.
+12. Restart the dev server.
+13. Go to `/login` and create an account.
 
 ## Environment Variables
 
@@ -79,9 +83,10 @@ Use `.env.example` as the template:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+GOOGLE_GENERATIVE_AI_API_KEY=
 ```
 
-Do not expose a Supabase service role key in this project.
+Do not expose a Supabase service role key in this project. Do not prefix the Gemini key with `NEXT_PUBLIC_`; it must stay server-only.
 
 ## Run Schema SQL
 
@@ -92,6 +97,8 @@ Open `supabase/schema.sql`, paste it into the Supabase SQL Editor, and run it. I
 Open `supabase/seed.sql`, paste it into the Supabase SQL Editor, and run it. The seed data is sample data and must be verified against official CBSE/NCERT curriculum before production use.
 
 For existing Supabase projects created before Hindi/French support, also run `supabase/update-language-subject.sql`. It adds the profile preference and French tracker rows without touching user progress.
+
+For existing projects created before AI Homework Help, run `supabase/update-homework-help.sql`. It adds usage counting only; it does not store prompts or AI answers.
 
 ## Local Run Commands
 
@@ -109,7 +116,7 @@ Open `http://localhost:3000`.
 1. Push this repo to GitHub.
 2. Import it in Vercel.
 3. Add these environment variables in Vercel Project Settings:
-   `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GOOGLE_GENERATIVE_AI_API_KEY`.
 4. Deploy.
 
 ## GitHub Push Commands
@@ -135,6 +142,7 @@ Seed data is sample data and must be verified against official CBSE/NCERT curric
 - Direct PDF generation is not included in V1; use browser Print / Save as PDF.
 - Seed data is intentionally incomplete sample data.
 - Email confirmation behavior depends on Supabase project auth settings.
+- AI Homework Help depends on Gemini free-tier availability and project rate limits.
 - No admin UI for editing syllabus rows yet.
 
 ## Roadmap
