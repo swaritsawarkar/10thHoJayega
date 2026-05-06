@@ -79,7 +79,11 @@ export default function Home() {
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle compact />
-            <Button render={<Link href="/login" />}>
+            <Button
+              render={<Link href="/login" />}
+              aria-label="Start tracking"
+              className="hidden sm:inline-flex"
+            >
               Start tracking
               <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
             </Button>
@@ -87,14 +91,14 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[1fr_0.9fr] lg:px-6 lg:py-20">
-        <div className="flex flex-col justify-center gap-7">
+      <section className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[1fr_0.9fr] lg:px-6 lg:py-20">
+        <div className="flex min-w-0 flex-col justify-center gap-7">
           <div className="flex flex-col gap-4">
             <BrandMark className="size-18" />
-            <h1 className="max-w-4xl text-5xl font-black leading-none tracking-normal md:text-7xl">
+            <h1 className="max-w-4xl text-4xl font-black leading-none tracking-normal sm:text-5xl md:text-7xl">
               10thHoJayega
             </h1>
-            <p className="max-w-2xl text-2xl font-bold">
+            <p className="max-w-2xl text-xl font-bold sm:text-2xl">
               10th ka syllabus. Sorted. Printed. Tracked. Ho jayega.
             </p>
             <p className="max-w-2xl text-lg text-muted-foreground">
@@ -131,7 +135,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
+        <div className="min-w-0 rounded-lg border bg-card p-4 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3 border-b pb-3">
             <div>
               <p className="font-mono text-xs text-muted-foreground">
