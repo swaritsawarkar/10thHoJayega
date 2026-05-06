@@ -6,6 +6,8 @@
 
 10thHoJayega is a Class 10 CBSE/NCERT syllabus tracker for students who need progress tracking, official NCERT links, focus blocks, and printable packs from their own account data.
 
+For a detailed writeup of what was learned, what tools were used, and how this project fits into a portfolio, see [PROJECT_LEARNINGS.md](PROJECT_LEARNINGS.md).
+
 ## Problem Solved
 
 Students can track syllabus progress in Supabase, then print a personalized checklist for revision and manual marking.
