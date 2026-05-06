@@ -256,7 +256,7 @@ export function HomeworkHelper({
           <p className="font-mono text-sm text-muted-foreground">
             Homework Help
           </p>
-          <h1 className="mt-2 text-4xl font-black tracking-normal">
+          <h1 className="mt-2 text-3xl font-black tracking-normal sm:text-4xl">
             Tutor needs one setup step.
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -276,13 +276,13 @@ export function HomeworkHelper({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-      <section className="flex flex-col gap-4">
-        <div className="rounded-lg border bg-card p-5">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      <section className="flex min-w-0 flex-col gap-4">
+        <div className="min-w-0 rounded-lg border bg-card p-5">
           <p className="font-mono text-sm text-muted-foreground">
             Homework Help
           </p>
-          <h1 className="mt-2 text-4xl font-black tracking-normal">
+          <h1 className="mt-2 text-3xl font-black tracking-normal sm:text-4xl">
             Ask. Understand. Then write.
           </h1>
           <p className="mt-2 text-muted-foreground">
@@ -291,9 +291,9 @@ export function HomeworkHelper({
           </p>
         </div>
 
-        <div className="rounded-lg border bg-card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
+        <div className="min-w-0 rounded-lg border bg-card p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-xl font-black">Context</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Optional, but better answers happen when the tutor knows the
@@ -304,7 +304,7 @@ export function HomeworkHelper({
                 and is not saved.
               </p>
             </div>
-            <span className="rounded-md border bg-muted px-2 py-1 font-mono text-xs">
+            <span className="w-fit rounded-md border bg-muted px-2 py-1 font-mono text-xs">
               {questionsLeft}/{dailyLimit} left
             </span>
           </div>
@@ -315,7 +315,7 @@ export function HomeworkHelper({
               <select
                 value={selectedSubjectId}
                 onChange={(event) => handleSubjectChange(event.target.value)}
-                className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="h-10 w-full min-w-0 rounded-md border bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 <option value="">No subject context</option>
                 {subjects.map((subject) => (
@@ -332,7 +332,7 @@ export function HomeworkHelper({
                 value={selectedChapterId}
                 disabled={!selectedSubjectId || availableChapters.length === 0}
                 onChange={(event) => setSelectedChapterId(event.target.value)}
-                className="h-10 rounded-md border bg-background px-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="h-10 w-full min-w-0 rounded-md border bg-background px-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 <option value="">No chapter context</option>
                 {availableChapters.map((chapter) => (
@@ -345,7 +345,7 @@ export function HomeworkHelper({
           </div>
         </div>
 
-        <div className="rounded-lg border bg-card p-5">
+        <div className="min-w-0 rounded-lg border bg-card p-5">
           <h2 className="text-xl font-black">Try asking</h2>
           <div className="mt-3 flex flex-col gap-2">
             {starterQuestions.map((question) => (
@@ -353,7 +353,7 @@ export function HomeworkHelper({
                 key={question}
                 type="button"
                 onClick={() => setInput(question)}
-                className="rounded-md border bg-background p-3 text-left text-sm transition hover:bg-muted"
+                className="rounded-md border bg-background p-3 text-left text-sm break-words transition hover:bg-muted"
               >
                 {question}
               </button>
@@ -362,15 +362,15 @@ export function HomeworkHelper({
         </div>
       </section>
 
-      <section className="flex min-h-[620px] flex-col rounded-lg border bg-card">
-        <div className="flex items-center justify-between gap-3 border-b p-4">
-          <div>
+      <section className="flex min-h-[620px] min-w-0 flex-col rounded-lg border bg-card">
+        <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <h2 className="text-xl font-black">Tutor chat</h2>
             <p className="text-sm text-muted-foreground">
               Session-only chat. Clear it whenever you want a fresh start.
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {isBusy && (
               <Button type="button" variant="outline" size="sm" onClick={stop}>
                 <SquareIcon data-icon="inline-start" aria-hidden="true" />
@@ -390,7 +390,7 @@ export function HomeworkHelper({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
           {messages.length === 0 ? (
             <div className="flex flex-1 items-center justify-center rounded-md border border-dashed p-6 text-center">
               <div>
@@ -407,10 +407,10 @@ export function HomeworkHelper({
               <article
                 key={message.id}
                 className={cn(
-                  "rounded-lg border p-4",
+                  "min-w-0 rounded-lg border p-4",
                   message.role === "user"
-                    ? "ml-auto max-w-[88%] bg-primary text-primary-foreground"
-                    : "mr-auto max-w-[92%] bg-background",
+                    ? "ml-auto max-w-full bg-primary text-primary-foreground sm:max-w-[88%]"
+                    : "mr-auto max-w-full bg-background sm:max-w-[92%]",
                 )}
               >
                 <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-normal opacity-80">
@@ -427,7 +427,7 @@ export function HomeworkHelper({
                       return (
                         <p
                           key={`${message.id}-text-${index}`}
-                          className="whitespace-pre-wrap"
+                          className="whitespace-pre-wrap break-words"
                         >
                           {part.text}
                         </p>
@@ -444,7 +444,7 @@ export function HomeworkHelper({
                           key={`${message.id}-image-${index}`}
                           src={part.url}
                           alt="Uploaded homework question"
-                          className="max-h-72 rounded-md border object-contain"
+                          className="max-h-72 max-w-full rounded-md border object-contain"
                         />
                       );
                     }
@@ -487,7 +487,7 @@ export function HomeworkHelper({
             />
 
             {imagePreviewUrl && selectedFile && (
-              <div className="flex items-center gap-3 rounded-md border bg-background p-2">
+              <div className="flex min-w-0 items-center gap-3 rounded-md border bg-background p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={imagePreviewUrl}
@@ -532,12 +532,13 @@ export function HomeworkHelper({
               <p className="text-xs text-muted-foreground">
                 One clear photo per question. Blurry crop = confused tutor.
               </p>
-              <div className="flex gap-2 sm:justify-end">
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={!canAsk}
+                  className="w-full sm:w-auto"
                 >
                   {selectedFile ? (
                     <ImageIcon data-icon="inline-start" aria-hidden="true" />
@@ -549,7 +550,7 @@ export function HomeworkHelper({
                 <Button
                   type="submit"
                   disabled={(!input.trim() && !selectedFile) || !canAsk}
-                  className="sm:min-w-32"
+                  className="w-full sm:min-w-32 sm:w-auto"
                 >
                   <SendIcon data-icon="inline-start" aria-hidden="true" />
                   {isBusy ? "Answering" : "Ask"}

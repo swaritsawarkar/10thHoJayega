@@ -33,7 +33,7 @@ export default async function SubjectPage({
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">
         <p className="font-mono text-sm text-muted-foreground">Subject</p>
-        <h1 className="mt-2 text-4xl font-black tracking-normal">
+        <h1 className="mt-2 text-3xl font-black tracking-normal sm:text-4xl">
           {subjectData.subject.name}
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">

@@ -3,6 +3,7 @@
 import { useState, useTransition, type ReactNode } from "react";
 import { DownloadIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
 
+import { DeleteAccountControl } from "@/components/app/delete-account-control";
 import { LanguageSubjectPicker } from "@/components/app/language-subject-picker";
 import { Button } from "@/components/ui/button";
 import {
@@ -120,8 +121,8 @@ export function SettingsPanel({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-      <section className="rounded-lg border bg-card p-5">
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
+      <section className="min-w-0 rounded-lg border bg-card p-5">
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="displayName">Display name</FieldLabel>
@@ -133,6 +134,7 @@ export function SettingsPanel({
               value={displayName}
               onChange={(event) => setDisplayName(event.target.value)}
               placeholder="Student name"
+              className="h-10"
             />
           </Field>
 
@@ -158,7 +160,7 @@ export function SettingsPanel({
         </FieldGroup>
       </section>
 
-      <section className="rounded-lg border bg-card p-5">
+      <section className="min-w-0 rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-5">
           <div>
             <h2 className="text-2xl font-black">Account tools</h2>
@@ -167,7 +169,7 @@ export function SettingsPanel({
             </p>
           </div>
 
-          <div className="rounded-md border bg-muted/30 p-3 text-sm">
+          <div className="min-w-0 rounded-md border bg-muted/30 p-3 text-sm">
             <p>
               <strong>Email:</strong> {email}
             </p>
@@ -176,8 +178,14 @@ export function SettingsPanel({
             </p>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button type="button" variant="outline" onClick={exportProgress}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            {accountFooter}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={exportProgress}
+              className="w-full sm:w-fit"
+            >
               <DownloadIcon data-icon="inline-start" aria-hidden="true" />
               Export progress JSON
             </Button>
@@ -186,6 +194,7 @@ export function SettingsPanel({
               variant="destructive"
               disabled={isPending}
               onClick={() => setIsConfirmingReset(true)}
+              className="w-full sm:w-fit"
             >
               <RotateCcwIcon data-icon="inline-start" aria-hidden="true" />
               Reset progress
@@ -220,7 +229,7 @@ export function SettingsPanel({
             </div>
           )}
 
-          {accountFooter}
+          <DeleteAccountControl />
         </div>
       </section>
     </div>

@@ -14,7 +14,7 @@ export default async function SettingsPage() {
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">
         <p className="font-mono text-sm text-muted-foreground">Settings</p>
-        <h1 className="mt-2 text-4xl font-black tracking-normal">
+        <h1 className="mt-2 text-3xl font-black tracking-normal sm:text-4xl">
           Account and progress controls.
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -28,7 +28,7 @@ export default async function SettingsPage() {
         profile={profile}
         initialLanguageSubject={languageSubject}
         progress={progress}
-        accountFooter={<LogoutButton />}
+        accountFooter={<LogoutButton className="w-full sm:w-fit" />}
       />
     </div>
   );

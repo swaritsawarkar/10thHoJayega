@@ -31,13 +31,13 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,var(--background),var(--muted))] px-4 py-12">
+    <main className="relative flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,var(--background),var(--muted))] px-3 py-12 sm:px-4">
       <div className="absolute right-4 top-4">
         <ThemeToggle />
       </div>
-      <div className="grid w-full max-w-5xl gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-        <section>
-          <h1 className="text-5xl font-black leading-none tracking-normal">
+      <div className="grid min-w-0 w-full max-w-5xl gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.8fr)] lg:items-center">
+        <section className="min-w-0">
+          <h1 className="text-4xl font-black leading-none tracking-normal sm:text-5xl">
             Login first. Then the syllabus can be bullied politely.
           </h1>
         </section>

@@ -36,8 +36,8 @@ export function PrintablePack({
     <div className="flex flex-col gap-6">
       <section className="no-print rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-4xl font-black tracking-normal">
+          <div className="min-w-0">
+            <h1 className="text-3xl font-black tracking-normal sm:text-4xl">
               Printable Pack
             </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -45,8 +45,12 @@ export function PrintablePack({
               syllabus progress.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={() => setGenerated(true)}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button
+              type="button"
+              onClick={() => setGenerated(true)}
+              className="w-full sm:w-fit"
+            >
               <FileCheck2Icon data-icon="inline-start" aria-hidden="true" />
               Generate my Printable Pack
             </Button>
@@ -55,6 +59,7 @@ export function PrintablePack({
               variant="outline"
               disabled={!generated}
               onClick={() => window.print()}
+              className="w-full sm:w-fit"
             >
               <PrinterIcon data-icon="inline-start" aria-hidden="true" />
               Print / Save as PDF

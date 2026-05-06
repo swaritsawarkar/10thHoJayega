@@ -84,11 +84,11 @@ export function ChapterDetailClient({
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex flex-col gap-3">
+          <div className="flex min-w-0 flex-col gap-3">
             <p className="font-mono text-sm text-muted-foreground">
               {subject.name} / Chapter {chapter.chapter_number ?? "-"}
             </p>
-            <h1 className="text-4xl font-black tracking-normal">
+            <h1 className="text-3xl font-black tracking-normal sm:text-4xl">
               {chapter.title}
             </h1>
             <div className="flex flex-wrap items-center gap-2">
@@ -99,7 +99,7 @@ export function ChapterDetailClient({
             </div>
           </div>
 
-          <div className="no-print flex flex-wrap gap-2">
+          <div className="no-print flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <ProgressCycleButton
               userId={userId}
               itemType="chapter"
@@ -111,6 +111,7 @@ export function ChapterDetailClient({
             {chapter.official_textbook_url && (
               <Button
                 variant="outline"
+                className="w-full sm:w-fit"
                 render={
                   <a
                     href={chapter.official_textbook_url}
@@ -128,8 +129,8 @@ export function ChapterDetailClient({
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <div className="rounded-lg border bg-card p-5">
+      <section className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+        <div className="min-w-0 rounded-lg border bg-card p-5">
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="chapterNote">
@@ -153,7 +154,7 @@ export function ChapterDetailClient({
           </FieldGroup>
         </div>
 
-        <div className="print-break-inside rounded-lg border bg-card p-5">
+        <div className="print-break-inside min-w-0 rounded-lg border bg-card p-5">
           <h2 className="text-xl font-black">Revision checklist</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Tick items while you study. These ticks are for this page session

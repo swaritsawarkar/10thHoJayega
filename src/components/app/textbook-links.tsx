@@ -27,9 +27,9 @@ export function TextbookLinks({
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">
         <div className="flex items-start gap-3">
-          <ShieldCheckIcon aria-hidden="true" />
-          <div>
-            <h1 className="text-4xl font-black tracking-normal">
+          <ShieldCheckIcon className="shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <h1 className="text-3xl font-black tracking-normal sm:text-4xl">
               Official textbook links
             </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -58,6 +58,7 @@ export function TextbookLinks({
                 <Button
                   key={`${group.subject}-${link.href}`}
                   variant="outline"
+                  className="w-full justify-between"
                   render={
                     <a href={link.href} target="_blank" rel="noreferrer" />
                   }

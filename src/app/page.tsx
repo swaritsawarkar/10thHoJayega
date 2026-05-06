@@ -67,12 +67,14 @@ export default function Home() {
         }}
       />
       <header className="border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <BrandMark />
-            <span>
-              <span className="block text-lg font-black">10thHoJayega</span>
-              <span className="block font-mono text-xs text-muted-foreground">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-4 lg:px-6">
+          <Link href="/" className="flex min-w-0 items-center gap-3">
+            <BrandMark className="shrink-0" />
+            <span className="min-w-0">
+              <span className="block truncate text-lg font-black">
+                10thHoJayega
+              </span>
+              <span className="block truncate font-mono text-xs text-muted-foreground">
                 10th ka syllabus. Sorted.
               </span>
             </span>
@@ -91,7 +93,7 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[1fr_0.9fr] lg:px-6 lg:py-20">
+      <section className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-3 py-12 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:px-6 lg:py-20">
         <div className="flex min-w-0 flex-col justify-center gap-7">
           <div className="flex flex-col gap-4">
             <BrandMark className="size-18" />
@@ -112,13 +114,18 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" render={<Link href="/login" />}>
+            <Button
+              size="lg"
+              className="w-full sm:w-fit"
+              render={<Link href="/login" />}
+            >
               Start tracking
               <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
             </Button>
             <Button
               size="lg"
               variant="outline"
+              className="w-full sm:w-fit"
               render={<Link href="/printable-pack" />}
             >
               Generate printable pack
@@ -152,9 +159,9 @@ export default function Home() {
               (subject, index) => (
                 <div
                   key={subject}
-                  className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md border bg-background p-3"
+                  className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md border bg-background p-3"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-bold">{subject}</p>
                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                       <div

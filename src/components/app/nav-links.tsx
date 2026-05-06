@@ -34,7 +34,7 @@ export function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex min-w-0 flex-wrap gap-1 xl:flex-1 xl:justify-center">
+    <nav className="-mx-1 flex min-w-0 max-w-full gap-1 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 xl:flex-1 xl:justify-center">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
@@ -45,7 +45,7 @@ export function NavLinks() {
             key={item.href}
             href={item.href}
             className={cn(
-              "inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+              "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:h-8",
               isActive &&
                 "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
             )}

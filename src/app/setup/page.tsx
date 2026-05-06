@@ -18,14 +18,14 @@ export const metadata: Metadata = {
 
 export default function SetupPage() {
   return (
-    <main className="min-h-screen bg-background px-4 py-10 lg:px-6">
+    <main className="min-h-screen bg-background px-3 py-10 sm:px-4 lg:px-6">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-col gap-3">
             <p className="font-mono text-sm text-muted-foreground">
               Setup guide
             </p>
-            <h1 className="text-5xl font-black tracking-normal">
+            <h1 className="text-4xl font-black tracking-normal sm:text-5xl">
               Finish the private setup checklist.
             </h1>
             <p className="max-w-2xl text-muted-foreground">

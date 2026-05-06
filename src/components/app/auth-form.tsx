@@ -169,7 +169,7 @@ export function AuthForm() {
   }
 
   return (
-    <section className="w-full max-w-md rounded-lg border bg-card p-5 shadow-sm">
+    <section className="w-full max-w-lg rounded-lg border bg-card p-5 shadow-sm">
       <div className="mb-5 flex rounded-md border bg-muted p-1">
         {(["login", "signup"] as const).map((item) => (
           <button
@@ -192,6 +192,40 @@ export function AuthForm() {
 
       <form onSubmit={handleSubmit}>
         <FieldGroup>
+          <Field data-invalid={Boolean(error)}>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+              aria-invalid={Boolean(error)}
+              className="h-10"
+            />
+          </Field>
+
+          <Field data-invalid={Boolean(error)}>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="At least 6 characters"
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
+              required
+              minLength={6}
+              aria-invalid={Boolean(error)}
+              className="h-10"
+            />
+            <FieldError>{error}</FieldError>
+          </Field>
+
           {mode === "signup" && (
             <>
               <Field>
@@ -202,6 +236,7 @@ export function AuthForm() {
                   onChange={(event) => setDisplayName(event.target.value)}
                   placeholder="Board survivor name"
                   autoComplete="name"
+                  className="h-10"
                 />
                 <FieldDescription>
                   Optional. You can change it later in settings.
@@ -229,8 +264,8 @@ export function AuthForm() {
             <Field>
               <FieldLabel>Language subject</FieldLabel>
               <FieldDescription>
-                Keep your saved Hindi/French choice, or switch it while logging
-                in.
+                Keep your saved Hindi/French choice, or switch it after typing
+                your credentials.
               </FieldDescription>
               <LanguageSubjectPicker
                 value={loginLanguageSelection}
@@ -239,38 +274,6 @@ export function AuthForm() {
               />
             </Field>
           )}
-
-          <Field data-invalid={Boolean(error)}>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              autoComplete="email"
-              required
-              aria-invalid={Boolean(error)}
-            />
-          </Field>
-
-          <Field data-invalid={Boolean(error)}>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 6 characters"
-              autoComplete={
-                mode === "login" ? "current-password" : "new-password"
-              }
-              required
-              minLength={6}
-              aria-invalid={Boolean(error)}
-            />
-            <FieldError>{error}</FieldError>
-          </Field>
 
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (

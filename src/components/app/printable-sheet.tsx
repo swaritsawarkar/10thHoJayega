@@ -47,11 +47,11 @@ export function PrintableSheet({
 
       <header className="print-cover flex flex-col gap-4 border-b pb-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-sm uppercase tracking-normal">
               10thHoJayega
             </p>
-            <h1 className="mt-1 text-4xl font-black tracking-normal">
+            <h1 className="mt-1 text-3xl font-black tracking-normal sm:text-4xl">
               {title}
             </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">{subtitle}</p>
@@ -59,7 +59,7 @@ export function PrintableSheet({
               10th ka syllabus. Sorted. Printed. Tracked. Ho jayega.
             </p>
           </div>
-          <div className="rounded-md border p-3 text-sm">
+          <div className="min-w-0 rounded-md border p-3 text-sm">
             <p>
               <strong>User:</strong> {userLabel}
             </p>

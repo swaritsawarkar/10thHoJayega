@@ -52,9 +52,9 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-sm text-muted-foreground">Dashboard</p>
-            <h1 className="text-4xl font-black tracking-normal">
+            <h1 className="text-3xl font-black tracking-normal sm:text-4xl">
               Hey {getDisplayName(user.email, profile?.display_name)}.
             </h1>
             <p className="mt-2 text-muted-foreground">
@@ -62,20 +62,35 @@ export default async function DashboardPage() {
               {languageSubjectLabel}.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button render={<Link href={continueHref} />}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button
+              className="w-full sm:w-fit"
+              render={<Link href={continueHref} />}
+            >
               Continue last chapter
               <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
             </Button>
-            <Button variant="outline" render={<Link href="/focus" />}>
+            <Button
+              variant="outline"
+              className="w-full sm:w-fit"
+              render={<Link href="/focus" />}
+            >
               <TimerIcon data-icon="inline-start" aria-hidden="true" />
               Start focus mode
             </Button>
-            <Button variant="outline" render={<Link href="/print" />}>
+            <Button
+              variant="outline"
+              className="w-full sm:w-fit"
+              render={<Link href="/print" />}
+            >
               <PrinterIcon data-icon="inline-start" aria-hidden="true" />
               Print today&apos;s planner
             </Button>
-            <Button variant="outline" render={<Link href="/printable-pack" />}>
+            <Button
+              variant="outline"
+              className="w-full sm:w-fit"
+              render={<Link href="/printable-pack" />}
+            >
               <SchoolIcon data-icon="inline-start" aria-hidden="true" />
               Generate Printable Pack
             </Button>
