@@ -5,8 +5,6 @@ import { AppShell } from "@/components/app/app-shell";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getDisplayName } from "@/lib/progress";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   robots: {
     index: false,
