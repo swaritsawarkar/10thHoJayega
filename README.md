@@ -19,7 +19,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - Maths exercise-level progress tracking
 - Private per-chapter notes
 - Focus mode with saved completed sessions
-- AI Homework Help with Gemini free tier and step-by-step tutor responses
+- AI Homework Help with Gemini free tier, photo upload, and step-by-step tutor responses
 - Official NCERT textbook links page
 - Printable planner
 - Printable Pack with only full syllabus checklist and Maths exercise tracker
@@ -143,6 +143,7 @@ Seed data is sample data and must be verified against official CBSE/NCERT curric
 - Seed data is intentionally incomplete sample data.
 - Email confirmation behavior depends on Supabase project auth settings.
 - AI Homework Help depends on Gemini free-tier availability and project rate limits.
+- Homework photos are sent to Gemini for the current answer only; they are not stored in Supabase.
 - No admin UI for editing syllabus rows yet.
 
 ## Roadmap

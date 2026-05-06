@@ -222,17 +222,27 @@ export const getSubjectData = cache(async (
   };
 });
 
-export const getChapterData = cache(async (userId: string, chapterId: string) => {
+export const getChapterData = cache(async (
+  userId: string,
+  chapterId: string,
+  subjectId: string,
+) => {
   const supabase = await createClient();
   if (!supabase) {
     throw new Error("Supabase is not configured.");
   }
 
-  const [chapterResult, progressResult, noteResult] = await Promise.all([
+  const [chapterResult, subjectResult, progressResult, noteResult] =
+    await Promise.all([
     supabase
       .from("chapters")
       .select(chapterColumns)
       .eq("id", chapterId)
+      .maybeSingle(),
+    supabase
+      .from("subjects")
+      .select(subjectColumns)
+      .eq("id", subjectId)
       .maybeSingle(),
     supabase
       .from("progress")
@@ -257,12 +267,6 @@ export const getChapterData = cache(async (userId: string, chapterId: string) =>
   if (!chapter) {
     return null;
   }
-
-  const subjectResult = await supabase
-    .from("subjects")
-    .select(subjectColumns)
-    .eq("id", chapter.subject_id)
-    .maybeSingle();
 
   return {
     chapter,

@@ -1,4 +1,5 @@
 import { SettingsPanel } from "@/components/app/settings-panel";
+import { LogoutButton } from "@/components/app/logout-button";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getUserProgress } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
@@ -27,6 +28,7 @@ export default async function SettingsPage() {
         profile={profile}
         initialLanguageSubject={languageSubject}
         progress={progress}
+        accountFooter={<LogoutButton />}
       />
     </div>
   );

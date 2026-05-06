@@ -4,8 +4,20 @@ import { createServerClient } from "@supabase/ssr";
 import { getSupabaseEnv, isSupabaseConfigured } from "@/lib/env";
 import type { Database } from "@/types/database";
 
+const supabaseAuthCookiePattern = /^sb-.+-auth-token(?:\.\d+)?$/;
+
+function hasSupabaseAuthCookie(request: NextRequest) {
+  return request.cookies
+    .getAll()
+    .some((cookie) => supabaseAuthCookiePattern.test(cookie.name));
+}
+
 export async function updateSession(request: NextRequest) {
   if (!isSupabaseConfigured()) {
+    return NextResponse.next({ request });
+  }
+
+  if (!hasSupabaseAuthCookie(request)) {
     return NextResponse.next({ request });
   }
 

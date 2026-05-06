@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
+import { LazyToaster } from "@/components/ui/lazy-toaster";
 import { themeInitScript } from "@/lib/theme";
 
 const geistSans = Geist({
@@ -43,7 +43,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
         {children}
-        <Toaster richColors closeButton />
+        <LazyToaster />
       </body>
     </html>
   );

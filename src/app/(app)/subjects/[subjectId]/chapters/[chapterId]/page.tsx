@@ -18,7 +18,7 @@ export default async function ChapterPage({
   const user = await requireUser();
   const profile = await getProfile(user.id);
   const languageSubject = getLanguageSubject(profile, user);
-  const data = await getChapterData(user.id, chapterId);
+  const data = await getChapterData(user.id, chapterId, subjectId);
 
   if (
     !data?.chapter ||

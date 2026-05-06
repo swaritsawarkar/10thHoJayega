@@ -1,12 +1,19 @@
 import { google } from "@ai-sdk/google";
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  streamText,
+  type FileUIPart,
+  type UIMessage,
+} from "ai";
 
 import { getCurrentUser, getProfile } from "@/lib/auth";
 import { isGoogleAiConfigured } from "@/lib/ai-env";
 import { getHomeworkHelpUsageCount } from "@/lib/db";
 import {
   buildHomeworkTutorSystemPrompt,
+  HOMEWORK_HELP_ALLOWED_IMAGE_TYPES,
   HOMEWORK_HELP_DAILY_LIMIT,
+  HOMEWORK_HELP_MAX_IMAGE_BYTES,
   HOMEWORK_HELP_MAX_MESSAGE_CHARS,
   HOMEWORK_HELP_MAX_MESSAGES,
   HOMEWORK_HELP_MAX_TOTAL_CHARS,
@@ -31,6 +38,16 @@ type HomeworkRequestBody = {
 const requestKeys = new Set(["messages", "subjectId", "chapterId"]);
 const messageKeys = new Set(["id", "role", "parts", "metadata"]);
 const textPartKeys = new Set(["type", "text", "state", "providerMetadata"]);
+const filePartKeys = new Set([
+  "type",
+  "mediaType",
+  "filename",
+  "url",
+  "providerMetadata",
+]);
+const allowedImageTypes = new Set<string>(HOMEWORK_HELP_ALLOWED_IMAGE_TYPES);
+const maxImageDataUrlChars =
+  Math.ceil((HOMEWORK_HELP_MAX_IMAGE_BYTES * 4) / 3) + 128;
 
 function textResponse(message: string, status: number) {
   return new Response(message, {
@@ -65,6 +82,77 @@ function normalizeOptionalId(
   return { ok: true, value };
 }
 
+function estimateDataUrlBytes(dataUrl: string, mediaType: string) {
+  const prefix = `data:${mediaType};base64,`;
+  if (!dataUrl.startsWith(prefix)) {
+    return null;
+  }
+
+  const base64 = dataUrl.slice(prefix.length);
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) {
+    return null;
+  }
+
+  const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+  return Math.floor((base64.length * 3) / 4) - padding;
+}
+
+function validateFilePart(rawPart: Record<string, unknown>): {
+  part?: FileUIPart;
+  error?: string;
+} {
+  if (hasUnexpectedKeys(rawPart, filePartKeys)) {
+    return { error: "Unexpected image fields were rejected." };
+  }
+
+  if (
+    typeof rawPart.mediaType !== "string" ||
+    !allowedImageTypes.has(rawPart.mediaType)
+  ) {
+    return { error: "Upload a JPG, PNG, or WebP homework photo." };
+  }
+
+  if (
+    typeof rawPart.url !== "string" ||
+    rawPart.url.length > maxImageDataUrlChars
+  ) {
+    return {
+      error: `Keep homework photos under ${Math.floor(
+        HOMEWORK_HELP_MAX_IMAGE_BYTES / (1024 * 1024),
+      )} MB.`,
+    };
+  }
+
+  const imageBytes = estimateDataUrlBytes(rawPart.url, rawPart.mediaType);
+  if (imageBytes === null) {
+    return { error: "Homework photos must be sent as valid data URLs." };
+  }
+
+  if (imageBytes > HOMEWORK_HELP_MAX_IMAGE_BYTES) {
+    return {
+      error: `Keep homework photos under ${Math.floor(
+        HOMEWORK_HELP_MAX_IMAGE_BYTES / (1024 * 1024),
+      )} MB.`,
+    };
+  }
+
+  if (
+    rawPart.filename !== undefined &&
+    (typeof rawPart.filename !== "string" || rawPart.filename.length > 160)
+  ) {
+    return { error: "Image filename is too long." };
+  }
+
+  return {
+    part: {
+      type: "file",
+      mediaType: rawPart.mediaType,
+      url: rawPart.url,
+      filename: rawPart.filename,
+    },
+  };
+}
+
 function validateMessages(value: unknown) {
   if (!Array.isArray(value)) {
     return { error: "messages must be an array." };
@@ -77,6 +165,7 @@ function validateMessages(value: unknown) {
   }
 
   let totalChars = 0;
+  let imageCount = 0;
   const messages: UIMessage[] = [];
 
   for (const [messageIndex, rawMessage] of value.entries()) {
@@ -107,27 +196,57 @@ function validateMessages(value: unknown) {
         return { error: "Message parts must be objects." };
       }
 
-      if (hasUnexpectedKeys(rawPart, textPartKeys)) {
-        return { error: "Unexpected message part fields were rejected." };
+      if (rawPart.type === "text") {
+        if (hasUnexpectedKeys(rawPart, textPartKeys)) {
+          return { error: "Unexpected message part fields were rejected." };
+        }
+
+        if (typeof rawPart.text !== "string") {
+          return { error: "Text message parts must include text." };
+        }
+
+        const text = rawPart.text.trim();
+        if (!text) {
+          return { error: "Empty text parts are not accepted." };
+        }
+
+        if (text.length > HOMEWORK_HELP_MAX_MESSAGE_CHARS) {
+          return {
+            error: `Keep each message under ${HOMEWORK_HELP_MAX_MESSAGE_CHARS} characters.`,
+          };
+        }
+
+        totalChars += text.length;
+        parts.push({ type: "text", text });
+        continue;
       }
 
-      if (rawPart.type !== "text" || typeof rawPart.text !== "string") {
-        return { error: "Homework Help V1 accepts text only." };
+      if (rawPart.type === "file") {
+        if (rawMessage.role !== "user") {
+          return { error: "Only student messages can include photos." };
+        }
+
+        if (messageIndex !== value.length - 1) {
+          return {
+            error: "Only the latest homework question can include a photo.",
+          };
+        }
+
+        imageCount += 1;
+        if (imageCount > 1) {
+          return { error: "Upload one homework photo at a time." };
+        }
+
+        const fileResult = validateFilePart(rawPart);
+        if (fileResult.error || !fileResult.part) {
+          return { error: fileResult.error ?? "Homework photo is invalid." };
+        }
+
+        parts.push(fileResult.part);
+        continue;
       }
 
-      const text = rawPart.text.trim();
-      if (!text) {
-        return { error: "Empty text parts are not accepted." };
-      }
-
-      if (text.length > HOMEWORK_HELP_MAX_MESSAGE_CHARS) {
-        return {
-          error: `Keep each message under ${HOMEWORK_HELP_MAX_MESSAGE_CHARS} characters.`,
-        };
-      }
-
-      totalChars += text.length;
-      parts.push({ type: "text", text });
+      return { error: "Homework Help accepts text and one image only." };
     }
 
     messages.push({

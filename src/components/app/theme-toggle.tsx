@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   applyTheme,
   getServerThemeSnapshot,
@@ -22,10 +22,12 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const label = `Switch to ${nextTheme} mode`;
 
   return (
-    <Button
+    <button
       type="button"
-      variant="outline"
-      size={compact ? "icon" : "default"}
+      className={buttonVariants({
+        variant: "outline",
+        size: compact ? "icon" : "default",
+      })}
       title={label}
       aria-label={label}
       onClick={() => applyTheme(nextTheme)}
@@ -39,6 +41,6 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         />
       )}
       {!compact && (isDark ? "Light mode" : "Dark mode")}
-    </Button>
+    </button>
   );
 }

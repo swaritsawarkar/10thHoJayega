@@ -1,13 +1,27 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import {
+  convertFileListToFileUIParts,
+  DefaultChatTransport,
+  type UIMessage,
+} from "ai";
 import {
   BotIcon,
+  CameraIcon,
   EraserIcon,
+  ImageIcon,
   SendIcon,
   SquareIcon,
+  XIcon,
   UserIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -15,20 +29,57 @@ import { toast } from "sonner";
 import { ErrorState } from "@/components/app/error-state";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  HOMEWORK_HELP_ALLOWED_IMAGE_TYPES,
+  HOMEWORK_HELP_MAX_IMAGE_BYTES,
+} from "@/lib/homework-help";
 import { cn } from "@/lib/utils";
 import type { Chapter, Subject } from "@/types/app";
 
 const starterQuestions = [
-  "Explain quadratic equations step by step.",
+  "Read this photo first, then solve it step by step.",
   "How do I write a 5-mark SST answer without rambling?",
   "Give me hints for balancing this chemical equation.",
 ];
 
-function getMessageText(message: UIMessage) {
-  return message.parts
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("");
+const allowedImageTypeSet = new Set<string>(HOMEWORK_HELP_ALLOWED_IMAGE_TYPES);
+
+function formatFileSize(bytes: number) {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  return `${Math.ceil(bytes / 1024)} KB`;
+}
+
+function stripOlderImages(messages: UIMessage[]) {
+  const latestUserMessageId = [...messages]
+    .reverse()
+    .find((message) => message.role === "user")?.id;
+
+  return messages.map((message) => {
+    if (message.id === latestUserMessageId) {
+      return message;
+    }
+
+    const partsWithoutFiles = message.parts.filter(
+      (part) => part.type !== "file",
+    );
+
+    if (partsWithoutFiles.length > 0) {
+      return { ...message, parts: partsWithoutFiles };
+    }
+
+    return {
+      ...message,
+      parts: [
+        {
+          type: "text",
+          text: "[Previous homework photo omitted after that answer.]",
+        },
+      ],
+    };
+  });
 }
 
 export function HomeworkHelper({
@@ -50,6 +101,11 @@ export function HomeworkHelper({
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [questionsLeft, setQuestionsLeft] = useState(initialQuestionsLeft);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [fileError, setFileError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   const availableChapters = useMemo(
     () =>
@@ -63,7 +119,7 @@ export function HomeworkHelper({
         api: "/api/homework-help",
         prepareSendMessagesRequest: ({ messages }) => ({
           body: {
-            messages,
+            messages: stripOlderImages(messages),
             subjectId: selectedSubjectId || null,
             chapterId: selectedChapterId || null,
           },
@@ -95,25 +151,97 @@ export function HomeworkHelper({
   });
 
   const isBusy = status === "submitted" || status === "streaming";
-  const canAsk =
-    isAiConfigured && !setupIssue && questionsLeft > 0 && !isBusy;
+  const canAsk = isAiConfigured && !setupIssue && questionsLeft > 0 && !isBusy;
+
+  useEffect(
+    () => () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    },
+    [],
+  );
 
   function handleSubjectChange(subjectId: string) {
     setSelectedSubjectId(subjectId);
     setSelectedChapterId("");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function clearSelectedFile() {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+
+    setSelectedFile(null);
+    setImagePreviewUrl(null);
+    setFileError("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      clearSelectedFile();
+      return;
+    }
+
+    if (!allowedImageTypeSet.has(file.type)) {
+      setFileError("Use a JPG, PNG, or WebP homework photo.");
+      setSelectedFile(null);
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > HOMEWORK_HELP_MAX_IMAGE_BYTES) {
+      setFileError(
+        `Keep the photo under ${formatFileSize(HOMEWORK_HELP_MAX_IMAGE_BYTES)}.`,
+      );
+      setSelectedFile(null);
+      event.target.value = "";
+      return;
+    }
+
+    setFileError("");
+    setSelectedFile(file);
+
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    previewUrlRef.current = objectUrl;
+    setImagePreviewUrl(objectUrl);
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedInput = input.trim();
 
-    if (!trimmedInput || !canAsk) {
+    if ((!trimmedInput && !selectedFile) || !canAsk) {
       return;
     }
 
     clearError();
-    void sendMessage({ text: trimmedInput });
+    const prompt =
+      trimmedInput ||
+      "Please read this homework photo first, then help me solve it step by step.";
+    const files = selectedFile
+      ? await convertFileListToFileUIParts(
+          fileInputRef.current?.files ?? undefined,
+        )
+      : undefined;
+
+    void sendMessage({
+      text: prompt,
+      ...(files && files.length > 0 ? { files } : {}),
+    });
     setInput("");
+    clearSelectedFile();
   }
 
   function clearChat() {
@@ -147,8 +275,8 @@ export function HomeworkHelper({
             <code>GOOGLE_GENERATIVE_AI_API_KEY=</code>
           </pre>
           <p className="mt-3 text-sm text-muted-foreground">
-            Get the key from Google AI Studio, restart the dev server, then
-            come back here.
+            Get the key from Google AI Studio, restart the dev server, then come
+            back here.
           </p>
         </section>
       </div>
@@ -178,6 +306,10 @@ export function HomeworkHelper({
               <p className="mt-1 text-sm text-muted-foreground">
                 Optional, but better answers happen when the tutor knows the
                 subject.
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Photo mode is session-only. The image is sent to Gemini for this
+                answer and is not saved to Supabase.
               </p>
             </div>
             <span className="rounded-md border bg-muted px-2 py-1 font-mono text-xs">
@@ -273,8 +405,8 @@ export function HomeworkHelper({
                 <BotIcon className="mx-auto size-10" aria-hidden="true" />
                 <p className="mt-3 font-black">No question yet.</p>
                 <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                  Paste the problem, pick a subject if useful, and ask for the
-                  part that is stuck.
+                  Paste the problem or add one clear photo. The tutor reads what
+                  is visible first, then helps with the stuck part.
                 </p>
               </div>
             </div>
@@ -297,8 +429,36 @@ export function HomeworkHelper({
                   )}
                   {message.role === "user" ? "You" : "Homework Helper"}
                 </div>
-                <div className="whitespace-pre-wrap text-sm leading-6">
-                  {getMessageText(message)}
+                <div className="flex flex-col gap-3 text-sm leading-6">
+                  {message.parts.map((part, index) => {
+                    if (part.type === "text") {
+                      return (
+                        <p
+                          key={`${message.id}-text-${index}`}
+                          className="whitespace-pre-wrap"
+                        >
+                          {part.text}
+                        </p>
+                      );
+                    }
+
+                    if (
+                      part.type === "file" &&
+                      part.mediaType.startsWith("image/")
+                    ) {
+                      return (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={`${message.id}-image-${index}`}
+                          src={part.url}
+                          alt="Uploaded homework question"
+                          className="max-h-72 rounded-md border object-contain"
+                        />
+                      );
+                    }
+
+                    return null;
+                  })}
                 </div>
               </article>
             ))
@@ -324,26 +484,85 @@ export function HomeworkHelper({
 
         <form onSubmit={handleSubmit} className="border-t p-4">
           <div className="flex flex-col gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={HOMEWORK_HELP_ALLOWED_IMAGE_TYPES.join(",")}
+              capture="environment"
+              className="sr-only"
+              onChange={handleFileChange}
+              disabled={!canAsk}
+            />
+
+            {imagePreviewUrl && selectedFile && (
+              <div className="flex items-center gap-3 rounded-md border bg-background p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imagePreviewUrl}
+                  alt="Selected homework question"
+                  className="size-16 rounded border object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">
+                    {selectedFile.name || "Homework photo"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatFileSize(selectedFile.size)} · used for this answer
+                    only
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={clearSelectedFile}
+                  aria-label="Remove selected homework photo"
+                >
+                  <XIcon aria-hidden="true" />
+                </Button>
+              </div>
+            )}
+
+            {fileError && (
+              <p className="text-sm font-medium text-destructive">
+                {fileError}
+              </p>
+            )}
+
             <Textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Paste your homework question here. Ask for hints, steps, or where you got stuck."
+              placeholder="Type the question, or add a photo and write what you need help with."
               className="min-h-24 resize-none"
               disabled={!canAsk}
             />
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-muted-foreground">
-                Gemini free tier is rate-limited. Keep questions focused and it
-                will behave.
+                One clear photo per question. Blurry crop = confused tutor.
               </p>
-              <Button
-                type="submit"
-                disabled={!input.trim() || !canAsk}
-                className="sm:min-w-32"
-              >
-                <SendIcon data-icon="inline-start" aria-hidden="true" />
-                {isBusy ? "Answering" : "Ask"}
-              </Button>
+              <div className="flex gap-2 sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={!canAsk}
+                >
+                  {selectedFile ? (
+                    <ImageIcon data-icon="inline-start" aria-hidden="true" />
+                  ) : (
+                    <CameraIcon data-icon="inline-start" aria-hidden="true" />
+                  )}
+                  {selectedFile ? "Change photo" : "Add photo"}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={(!input.trim() && !selectedFile) || !canAsk}
+                  className="sm:min-w-32"
+                >
+                  <SendIcon data-icon="inline-start" aria-hidden="true" />
+                  {isBusy ? "Answering" : "Ask"}
+                </Button>
+              </div>
             </div>
           </div>
         </form>

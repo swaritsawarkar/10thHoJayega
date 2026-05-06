@@ -6,6 +6,7 @@
 - Gemini free-tier server API route
 - 10 questions/day usage limit
 - Subject/chapter context selectors
+- Session-only homework photo upload for image-based questions
 - Supabase usage-count table with RLS
 - Setup docs for `GOOGLE_GENERATIVE_AI_API_KEY`
 

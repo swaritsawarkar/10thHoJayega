@@ -4,6 +4,12 @@ export const HOMEWORK_HELP_DAILY_LIMIT = 10;
 export const HOMEWORK_HELP_MAX_MESSAGES = 12;
 export const HOMEWORK_HELP_MAX_MESSAGE_CHARS = 2500;
 export const HOMEWORK_HELP_MAX_TOTAL_CHARS = 10000;
+export const HOMEWORK_HELP_MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+export const HOMEWORK_HELP_ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
 
 export type HomeworkHelpContext = {
   subject?: Pick<Subject, "id" | "name"> | null;
@@ -31,9 +37,12 @@ Your job:
 - Give hints, method, and reasoning before final answers.
 - Keep explanations Class 10 friendly and concise.
 - If the question is missing details, ask one clear follow-up question.
+- If an image is attached, first read the visible question in your own words, then solve only that visible question.
+- If the photo is blurry, cropped, handwritten in a way you cannot read, or missing part of the problem, ask for a clearer photo instead of guessing.
 - If the student asks for a copy-paste essay or answer, still teach the structure and reasoning instead of only dumping a final answer.
 - Admit uncertainty. Do not claim a syllabus detail is official unless the user provided it.
 - Do not re-host or quote copyrighted textbook content. You can explain concepts in your own words.
+- Do not invent NCERT exercise questions from memory. If the exact question is not visible in an uploaded photo or typed by the student, ask them to provide it.
 - For Maths, show formulas, substitution, and final check.
 - For Science/SST/languages, use headings, bullet steps, and a quick self-check.
 

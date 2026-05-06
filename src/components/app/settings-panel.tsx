@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { DownloadIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { LanguageSubjectPicker } from "@/components/app/language-subject-picker";
-import { LogoutButton } from "@/components/app/logout-button";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -24,12 +23,14 @@ export function SettingsPanel({
   profile,
   initialLanguageSubject,
   progress,
+  accountFooter,
 }: {
   userId: string;
   email: string;
   profile: UserProfile | null;
   initialLanguageSubject: LanguageSubject;
   progress: UserProgress[];
+  accountFooter?: ReactNode;
 }) {
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [languageSubject, setLanguageSubject] = useState<LanguageSubject>(
@@ -214,7 +215,7 @@ export function SettingsPanel({
             </div>
           )}
 
-          <LogoutButton />
+          {accountFooter}
         </div>
       </section>
     </div>
