@@ -1,13 +1,13 @@
 import { SettingsPanel } from "@/components/app/settings-panel";
 import { getProfile, requireUser } from "@/lib/auth";
-import { getAppData } from "@/lib/db";
+import { getUserProgress } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 
 export default async function SettingsPage() {
   const user = await requireUser();
   const profile = await getProfile(user.id);
   const languageSubject = getLanguageSubject(profile, user);
-  const { progress } = await getAppData(user.id);
+  const progress = await getUserProgress(user.id);
 
   return (
     <div className="flex flex-col gap-6">

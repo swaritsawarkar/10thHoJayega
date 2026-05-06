@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import {
   filterChaptersForSubjects,
@@ -21,6 +23,17 @@ type AppData = {
   progress: UserProgress[];
 };
 
+type AppDataOptions = {
+  includeExercises?: boolean;
+};
+
+const subjectColumns = "id,name,description,sort_order";
+const chapterColumns =
+  "id,subject_id,title,chapter_number,official_textbook_url,sort_order";
+const exerciseColumns = "id,chapter_id,title,sort_order";
+const progressColumns = "id,user_id,item_type,item_id,status,updated_at";
+const noteColumns = "id,user_id,chapter_id,content,updated_at";
+
 function ensureResult<T>(
   result: { data: T | null; error: { message: string } | null },
   label: string,
@@ -32,23 +45,47 @@ function ensureResult<T>(
   return result.data as T;
 }
 
-export async function getAppData(
+export const getUserProgress = cache(
+  async (userId: string): Promise<UserProgress[]> => {
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error("Supabase is not configured.");
+    }
+
+    const progressResult = await supabase
+      .from("progress")
+      .select(progressColumns)
+      .eq("user_id", userId)
+      .order("updated_at", { ascending: false });
+
+    return ensureResult(
+      progressResult,
+      "Could not load progress",
+    ) as UserProgress[];
+  },
+);
+
+export const getAppData = cache(async (
   userId: string,
   languageSubject?: LanguageSubject,
-): Promise<AppData> {
+  options: AppDataOptions = {},
+): Promise<AppData> => {
   const supabase = await createClient();
   if (!supabase) {
     throw new Error("Supabase is not configured.");
   }
 
+  const includeExercises = options.includeExercises ?? true;
   const [subjectsResult, chaptersResult, exercisesResult, progressResult] =
     await Promise.all([
-      supabase.from("subjects").select("*").order("sort_order"),
-      supabase.from("chapters").select("*").order("sort_order"),
-      supabase.from("exercises").select("*").order("sort_order"),
+      supabase.from("subjects").select(subjectColumns).order("sort_order"),
+      supabase.from("chapters").select(chapterColumns).order("sort_order"),
+      includeExercises
+        ? supabase.from("exercises").select(exerciseColumns).order("sort_order")
+        : Promise.resolve({ data: [], error: null }),
       supabase
         .from("progress")
-        .select("*")
+        .select(progressColumns)
         .eq("user_id", userId)
         .order("updated_at", { ascending: false }),
     ]);
@@ -84,13 +121,13 @@ export async function getAppData(
       "Could not load progress",
     ) as UserProgress[],
   };
-}
+});
 
-export async function getSubjectData(
+export const getSubjectData = cache(async (
   userId: string,
   subjectId: string,
   languageSubject?: LanguageSubject,
-) {
+) => {
   const supabase = await createClient();
   if (!supabase) {
     throw new Error("Supabase is not configured.");
@@ -108,56 +145,83 @@ export async function getSubjectData(
     };
   }
 
-  const [subjectResult, chaptersResult, exercisesResult, progressResult] =
-    await Promise.all([
-      supabase.from("subjects").select("*").eq("id", subjectId).maybeSingle(),
-      supabase
-        .from("chapters")
-        .select("*")
-        .eq("subject_id", subjectId)
-        .order("sort_order"),
-      supabase.from("exercises").select("*").order("sort_order"),
-      supabase.from("progress").select("*").eq("user_id", userId),
-    ]);
+  const [subjectResult, chaptersResult, progressResult] = await Promise.all([
+    supabase
+      .from("subjects")
+      .select(subjectColumns)
+      .eq("id", subjectId)
+      .maybeSingle(),
+    supabase
+      .from("chapters")
+      .select(chapterColumns)
+      .eq("subject_id", subjectId)
+      .order("sort_order"),
+    supabase
+      .from("progress")
+      .select(progressColumns)
+      .eq("user_id", userId)
+      .order("updated_at", { ascending: false }),
+  ]);
 
-  return {
-    subject: ensureResult(
-      subjectResult,
-      "Could not load subject",
-    ) as Subject | null,
-    chapters: ensureResult(
-      chaptersResult,
-      "Could not load chapters",
-    ) as Chapter[],
-    exercises: ensureResult(
+  const subject = ensureResult(
+    subjectResult,
+    "Could not load subject",
+  ) as Subject | null;
+  const chapters = ensureResult(
+    chaptersResult,
+    "Could not load chapters",
+  ) as Chapter[];
+
+  let exercises: Exercise[] = [];
+  if (subject?.id === "maths" && chapters.length > 0) {
+    const exercisesResult = await supabase
+      .from("exercises")
+      .select(exerciseColumns)
+      .in(
+        "chapter_id",
+        chapters.map((chapter) => chapter.id),
+      )
+      .order("sort_order");
+
+    exercises = ensureResult(
       exercisesResult,
       "Could not load exercises",
-    ) as Exercise[],
+    ) as Exercise[];
+  }
+
+  return {
+    subject,
+    chapters,
+    exercises,
     progress: ensureResult(
       progressResult,
       "Could not load progress",
     ) as UserProgress[],
   };
-}
+});
 
-export async function getChapterData(userId: string, chapterId: string) {
+export const getChapterData = cache(async (userId: string, chapterId: string) => {
   const supabase = await createClient();
   if (!supabase) {
     throw new Error("Supabase is not configured.");
   }
 
   const [chapterResult, progressResult, noteResult] = await Promise.all([
-    supabase.from("chapters").select("*").eq("id", chapterId).maybeSingle(),
+    supabase
+      .from("chapters")
+      .select(chapterColumns)
+      .eq("id", chapterId)
+      .maybeSingle(),
     supabase
       .from("progress")
-      .select("*")
+      .select(progressColumns)
       .eq("user_id", userId)
       .eq("item_type", "chapter")
       .eq("item_id", chapterId)
       .maybeSingle(),
     supabase
       .from("notes")
-      .select("*")
+      .select(noteColumns)
       .eq("user_id", userId)
       .eq("chapter_id", chapterId)
       .maybeSingle(),
@@ -174,7 +238,7 @@ export async function getChapterData(userId: string, chapterId: string) {
 
   const subjectResult = await supabase
     .from("subjects")
-    .select("*")
+    .select(subjectColumns)
     .eq("id", chapter.subject_id)
     .maybeSingle();
 
@@ -190,4 +254,4 @@ export async function getChapterData(userId: string, chapterId: string) {
     ),
     note: ensureResult<Note | null>(noteResult, "Could not load notes"),
   };
-}
+});

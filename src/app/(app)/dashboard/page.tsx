@@ -27,6 +27,7 @@ export default async function DashboardPage() {
   const { subjects, chapters, progress } = await getAppData(
     user.id,
     languageSubject,
+    { includeExercises: false },
   );
   const hasLanguageSubjectRows = subjects.some(
     (subject) => subject.id === languageSubject,

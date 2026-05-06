@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ChapterAccordion } from "@/components/app/chapter-accordion";
 import { ProgressSummary } from "@/components/app/progress-summary";
 import { getProfile, requireUser } from "@/lib/auth";
-import { getAppData, getSubjectData } from "@/lib/db";
+import { getSubjectData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot } from "@/lib/progress";
 import { getSubjectDescription } from "@/lib/subject-copy";
@@ -23,7 +23,6 @@ export default async function SubjectPage({
     notFound();
   }
 
-  const appData = await getAppData(user.id, languageSubject);
   const snapshot = calculateSnapshot(
     [subjectData.subject],
     subjectData.chapters,
@@ -48,7 +47,7 @@ export default async function SubjectPage({
         userId={user.id}
         subject={subjectData.subject}
         chapters={subjectData.chapters}
-        exercises={appData.exercises}
+        exercises={subjectData.exercises}
         progress={subjectData.progress}
       />
     </div>
