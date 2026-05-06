@@ -7,6 +7,7 @@ import {
   GaugeIcon,
   HomeIcon,
   LibraryIcon,
+  MessageSquarePlusIcon,
   MessageCircleQuestionIcon,
   PrinterIcon,
   SettingsIcon,
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/textbooks", label: "Textbooks", icon: LibraryIcon },
   { href: "/print", label: "Print", icon: PrinterIcon },
   { href: "/printable-pack", label: "Printable Pack", icon: GaugeIcon },
+  { href: "/feedback", label: "Feedback", icon: MessageSquarePlusIcon },
   { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 

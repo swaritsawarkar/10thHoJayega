@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { MessageSquarePlusIcon } from "lucide-react";
 
 import { AuthFormLoader } from "@/components/app/auth-form-loader";
 import { SetupRequired } from "@/components/app/setup-required";
 import { ThemeToggle } from "@/components/app/theme-toggle";
+import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 
@@ -41,7 +43,25 @@ export default async function LoginPage() {
             Login first. Then the syllabus can be bullied politely.
           </h1>
         </section>
-        <AuthFormLoader />
+        <div className="flex flex-col gap-3">
+          <AuthFormLoader />
+          <Button
+            variant="outline"
+            className="w-full"
+            render={
+              <a
+                href="mailto:sawarkarswarit@gmail.com?subject=10thHoJayega%20feedback"
+                data-testid="login-feedback-link"
+              />
+            }
+          >
+            <MessageSquarePlusIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />
+            Send feedback
+          </Button>
+        </div>
       </div>
     </main>
   );
