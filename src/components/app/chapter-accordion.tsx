@@ -23,19 +23,21 @@ import type {
   UserProgress,
 } from "@/types/app";
 
+export type ChapterAccordionProps = {
+  userId: string;
+  subject: Subject;
+  chapters: Chapter[];
+  exercises: Exercise[];
+  progress: UserProgress[];
+};
+
 export function ChapterAccordion({
   userId,
   subject,
   chapters,
   exercises,
   progress,
-}: {
-  userId: string;
-  subject: Subject;
-  chapters: Chapter[];
-  exercises: Exercise[];
-  progress: UserProgress[];
-}) {
+}: ChapterAccordionProps) {
   const isMaths = subject.id === "maths";
   const [progressRows, setProgressRows] = useState(progress);
 
@@ -103,7 +105,7 @@ export function ChapterAccordion({
                   <p className="font-semibold">Chapter status</p>
                   <p className="text-sm text-muted-foreground">
                     The button shows the next action. Every click saves the new
-                    status to Supabase.
+                    status.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -138,7 +140,7 @@ export function ChapterAccordion({
                   </div>
                   {chapterExercises.length === 0 ? (
                     <p className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-                      No exercises seeded yet for this sample chapter.
+                      No exercises loaded yet for this sample chapter.
                     </p>
                   ) : (
                     <div className="grid gap-2 md:grid-cols-2">
@@ -150,7 +152,7 @@ export function ChapterAccordion({
                           <div>
                             <p className="font-medium">{exercise.title}</p>
                             <p className="text-xs text-muted-foreground">
-                              Exercise has its own Supabase progress row.
+                              Exercise has its own progress status.
                             </p>
                           </div>
                           <ProgressCycleButton

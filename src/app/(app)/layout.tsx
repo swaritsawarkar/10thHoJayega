@@ -1,10 +1,18 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 
 import { AppShell } from "@/components/app/app-shell";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getDisplayName } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function ProtectedLayout({
   children,

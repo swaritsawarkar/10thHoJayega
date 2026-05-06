@@ -5,48 +5,40 @@ export function BrandMark({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center rounded-md border-2 border-foreground bg-foreground text-background",
+        "inline-flex size-12 shrink-0 items-center justify-center rounded-md bg-foreground text-background shadow-sm",
         className,
       )}
     >
-      <svg viewBox="0 0 64 64" className="size-full" focusable="false">
+      <svg viewBox="0 0 96 96" className="size-full" focusable="false">
+        <rect width="96" height="96" rx="22" fill="hsl(var(--foreground))" />
         <rect
-          x="10"
-          y="9"
-          width="44"
-          height="46"
-          rx="8"
-          fill="hsl(var(--foreground))"
-        />
-        <rect
-          x="15"
-          y="14"
-          width="34"
-          height="36"
-          rx="5"
+          x="12"
+          y="12"
+          width="72"
+          height="72"
+          rx="17"
           fill="hsl(var(--background))"
         />
+        <path d="M31 28h-8v-7h16v53h-8V28Z" fill="hsl(var(--foreground))" />
         <path
-          d="M21 36.5l7 7L43.5 25"
+          d="M58 21c12.7 0 20 10.4 20 26.5S70.7 74 58 74 38 63.6 38 47.5 45.3 21 58 21Zm0 8c-7.1 0-11.2 6.8-11.2 18.5S50.9 66 58 66s11.2-6.8 11.2-18.5S65.1 29 58 29Z"
+          fill="hsl(var(--foreground))"
+        />
+        <path
+          d="M25 62.5 39.5 77 74 35"
+          fill="none"
+          stroke="hsl(var(--ring))"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="9"
+        />
+        <path
+          d="M25 62.5 39.5 77 74 35"
           fill="none"
           stroke="hsl(var(--primary))"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="5"
-        />
-        <path
-          d="M21 23h20"
-          fill="none"
-          stroke="hsl(var(--foreground))"
-          strokeLinecap="round"
-          strokeWidth="4"
-        />
-        <path
-          d="M21 30h12"
-          fill="none"
-          stroke="hsl(var(--foreground))"
-          strokeLinecap="round"
-          strokeWidth="4"
         />
       </svg>
     </span>

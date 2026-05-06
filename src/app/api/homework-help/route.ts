@@ -323,7 +323,7 @@ async function getHomeworkContext({
 }): Promise<{ context: HomeworkHelpContext; error?: string }> {
   const supabase = await createClient();
   if (!supabase) {
-    return { context: {}, error: "Supabase is not configured." };
+    return { context: {}, error: "Study data is not connected yet." };
   }
 
   const userProfile = await getProfile(userId);
@@ -407,7 +407,7 @@ export async function POST(request: Request) {
 
   if (!isGoogleAiConfigured()) {
     return textResponse(
-      "Homework Help needs GOOGLE_GENERATIVE_AI_API_KEY in the server environment.",
+      "Homework Help needs one private setup step before it can answer.",
       503,
     );
   }
@@ -422,7 +422,7 @@ export async function POST(request: Request) {
     usageCount = await getHomeworkHelpUsageCount(user.id);
   } catch {
     return textResponse(
-      "Homework Help usage table is not ready. Run supabase/update-homework-help.sql.",
+      "The daily Homework Help counter is not ready yet.",
       503,
     );
   }
@@ -446,7 +446,7 @@ export async function POST(request: Request) {
 
   const supabase = await createClient();
   if (!supabase) {
-    return textResponse("Supabase is not configured.", 503);
+    return textResponse("Study data is not connected yet.", 503);
   }
 
   const result = streamText({

@@ -1,10 +1,24 @@
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 
-import { AuthForm } from "@/components/app/auth-form";
+import { AuthFormLoader } from "@/components/app/auth-form-loader";
 import { SetupRequired } from "@/components/app/setup-required";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { getCurrentUser } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description:
+    "Sign in or create a free 10thHoJayega account to save Class 10 syllabus progress and printable checklists.",
+  alternates: {
+    canonical: "/login",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function LoginPage() {
   if (!isSupabaseConfigured()) {
@@ -27,7 +41,7 @@ export default async function LoginPage() {
             Login first. Then the syllabus can be bullied politely.
           </h1>
         </section>
-        <AuthForm />
+        <AuthFormLoader />
       </div>
     </main>
   );

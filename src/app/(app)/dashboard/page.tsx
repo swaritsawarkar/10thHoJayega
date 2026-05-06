@@ -85,8 +85,8 @@ export default async function DashboardPage() {
 
       {subjects.length === 0 ? (
         <EmptyState
-          title="No subjects seeded yet"
-          description="Run supabase/seed.sql after schema.sql. The app is ready; it just needs the sample syllabus rows."
+          title="Syllabus data is not ready yet"
+          description="Ask the project owner to load the Class 10 syllabus so your subjects can appear here."
           href="/setup"
           action="Open setup"
         />
@@ -95,12 +95,11 @@ export default async function DashboardPage() {
           {!hasLanguageSubjectRows && (
             <section className="rounded-lg border border-destructive/40 bg-destructive/5 p-4">
               <h2 className="font-black">
-                {languageSubjectLabel} rows are not seeded yet.
+                {languageSubjectLabel} is not ready yet.
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Run <code>supabase/update-language-subject.sql</code> in the
-                Supabase SQL editor once. Then {languageSubjectLabel} will
-                appear in this dashboard and print packs.
+                Ask the project owner to load this language subject so it can
+                appear in your dashboard and print packs.
               </p>
             </section>
           )}

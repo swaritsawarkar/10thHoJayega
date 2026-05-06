@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { PauseIcon, PlayIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,11 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabase,
+  notifyError,
+  notifySuccess,
+} from "@/lib/client-effects";
 
 const modes = [
   { id: "25/5 classic", label: "25/5 classic", duration: 25, break: 5 },
@@ -28,7 +31,11 @@ function formatTime(totalSeconds: number) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-export function FocusTimer({ userId }: { userId: string }) {
+export type FocusTimerProps = {
+  userId: string;
+};
+
+export function FocusTimer({ userId }: FocusTimerProps) {
   const [modeId, setModeId] = useState(modes[0].id);
   const [customDuration, setCustomDuration] = useState(25);
   const [customBreak, setCustomBreak] = useState(5);
@@ -54,7 +61,7 @@ export function FocusTimer({ userId }: { userId: string }) {
           window.clearInterval(interval);
           setIsRunning(false);
           setCompleted(true);
-          toast.success("Focus block complete. Reflection time.");
+          void notifySuccess("Focus block complete. Reflection time.");
           return 0;
         }
 
@@ -78,7 +85,7 @@ export function FocusTimer({ userId }: { userId: string }) {
 
   function saveSession() {
     startTransition(async () => {
-      const supabase = createClient();
+      const supabase = await getBrowserSupabase();
       const { error } = await supabase.from("focus_sessions").insert({
         user_id: userId,
         mode: selectedMode.label,
@@ -90,11 +97,11 @@ export function FocusTimer({ userId }: { userId: string }) {
       });
 
       if (error) {
-        toast.error("Focus session did not save.");
+        void notifyError("Focus session did not save.");
         return;
       }
 
-      toast.success("Focus session saved");
+      void notifySuccess("Focus session saved");
       setReflection("");
       setGoal("");
       resetTimer();

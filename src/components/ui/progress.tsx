@@ -55,10 +55,7 @@ function ProgressTrack({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-function ProgressIndicator({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+function ProgressIndicator({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="progress-indicator"

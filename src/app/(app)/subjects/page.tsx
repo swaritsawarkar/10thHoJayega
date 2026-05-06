@@ -37,11 +37,11 @@ export default async function SubjectsPage() {
       {!hasLanguageSubjectRows && (
         <section className="rounded-lg border border-destructive/40 bg-destructive/5 p-4">
           <h2 className="font-black">
-            {languageSubjectLabel} rows are not seeded yet.
+            {languageSubjectLabel} is not ready yet.
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Run <code>supabase/update-language-subject.sql</code> once in
-            Supabase. No fake subject rows here.
+            Ask the project owner to load this language subject so it can show
+            up in your tracker.
           </p>
         </section>
       )}

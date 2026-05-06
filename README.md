@@ -68,6 +68,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
+NEXT_PUBLIC_SITE_URL=https://10thhojayega.vercel.app
 ```
 
 7. Open Supabase SQL Editor.
@@ -118,8 +119,13 @@ Open `http://localhost:3000`.
 1. Push this repo to GitHub.
 2. Import it in Vercel.
 3. Add these environment variables in Vercel Project Settings:
-   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GOOGLE_GENERATIVE_AI_API_KEY`.
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, and `NEXT_PUBLIC_SITE_URL`.
 4. Deploy.
+
+Set `NEXT_PUBLIC_SITE_URL` to the production origin. Use
+`https://10thhojayega.vercel.app` for the current Vercel domain, or replace it
+with a custom domain later, so canonical URLs, `robots.txt`, and `sitemap.xml`
+use the public domain.
 
 ## GitHub Push Commands
 

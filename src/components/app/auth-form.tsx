@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2Icon, MailIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { LanguageSubjectPicker } from "@/components/app/language-subject-picker";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,6 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { getBrowserSupabase, notifySuccess } from "@/lib/client-effects";
 import type { LanguageSubject } from "@/lib/language-subject";
 
 type AuthMode = "login" | "signup";
@@ -24,15 +23,15 @@ function getFriendlyAuthError(message: string) {
   const normalized = message.toLowerCase();
 
   if (normalized.includes("email rate limit")) {
-    return "Supabase email rate limit hit. For local dev, turn off Auth > Providers > Email > Confirm email, delete this unconfirmed user if it exists, then sign up again.";
+    return "Too many sign-in emails were sent. Wait a bit, then try again.";
   }
 
   if (normalized.includes("email not confirmed")) {
-    return "Email is not confirmed yet. Confirm it from your inbox, or disable email confirmation in Supabase for local dev.";
+    return "Email is not confirmed yet. Check your inbox, then log in again.";
   }
 
   if (normalized.includes("already registered")) {
-    return "This email is already registered. Try Login, or delete the unconfirmed user in Supabase Auth > Users and sign up again.";
+    return "This email is already registered. Try Login instead.";
   }
 
   return message;
@@ -57,7 +56,7 @@ export function AuthForm() {
     nextLanguageSubject: LanguageSubject,
     nextDisplayName?: string,
   ) {
-    const supabase = createClient();
+    const supabase = await getBrowserSupabase();
 
     await supabase.auth.updateUser({
       data: {
@@ -85,7 +84,7 @@ export function AuthForm() {
     setError("");
     setIsLoading(true);
 
-    const supabase = createClient();
+    const supabase = await getBrowserSupabase();
     const trimmedEmail = email.trim();
 
     if (mode === "login") {
@@ -135,7 +134,7 @@ export function AuthForm() {
       }
 
       if (!data.session) {
-        toast.success("Account created. Confirm your email, then log in.");
+        void notifySuccess("Account created. Confirm your email, then log in.");
         setMode("login");
         setLoginLanguageSelection(languageSubject);
         setPassword("");

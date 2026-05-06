@@ -2,7 +2,6 @@
 
 import { useState, useTransition, type ReactNode } from "react";
 import { DownloadIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { LanguageSubjectPicker } from "@/components/app/language-subject-picker";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,22 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabase,
+  notifyError,
+  notifySuccess,
+} from "@/lib/client-effects";
 import type { UserProfile, UserProgress } from "@/types/app";
 import type { LanguageSubject } from "@/lib/language-subject";
+
+export type SettingsPanelProps = {
+  userId: string;
+  email: string;
+  profile: UserProfile | null;
+  initialLanguageSubject: LanguageSubject;
+  progress: UserProgress[];
+  accountFooter?: ReactNode;
+};
 
 export function SettingsPanel({
   userId,
@@ -24,14 +36,7 @@ export function SettingsPanel({
   initialLanguageSubject,
   progress,
   accountFooter,
-}: {
-  userId: string;
-  email: string;
-  profile: UserProfile | null;
-  initialLanguageSubject: LanguageSubject;
-  progress: UserProgress[];
-  accountFooter?: ReactNode;
-}) {
+}: SettingsPanelProps) {
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [languageSubject, setLanguageSubject] = useState<LanguageSubject>(
     initialLanguageSubject,
@@ -41,7 +46,7 @@ export function SettingsPanel({
 
   function saveProfile() {
     startTransition(async () => {
-      const supabase = createClient();
+      const supabase = await getBrowserSupabase();
       const { error: authError } = await supabase.auth.updateUser({
         data: {
           display_name: displayName.trim() || null,
@@ -50,7 +55,7 @@ export function SettingsPanel({
       });
 
       if (authError) {
-        toast.error("Profile did not save.");
+        void notifyError("Profile did not save.");
         return;
       }
 
@@ -61,13 +66,13 @@ export function SettingsPanel({
       });
 
       if (error && !error.message.toLowerCase().includes("language_subject")) {
-        toast.error("Profile did not save.");
+        void notifyError("Profile did not save.");
         return;
       }
 
-      toast.success(
+      void notifySuccess(
         error
-          ? "Saved. Run the latest schema SQL to store language on profiles too."
+          ? "Saved. Language preference will sync fully after the latest account update is applied."
           : "Profile saved",
       );
     });
@@ -97,18 +102,18 @@ export function SettingsPanel({
 
   function resetProgress() {
     startTransition(async () => {
-      const supabase = createClient();
+      const supabase = await getBrowserSupabase();
       const { error } = await supabase
         .from("progress")
         .delete()
         .eq("user_id", userId);
 
       if (error) {
-        toast.error("Progress reset failed.");
+        void notifyError("Progress reset failed.");
         return;
       }
 
-      toast.success("Your progress rows were reset");
+      void notifySuccess("Your saved progress was reset");
       setIsConfirmingReset(false);
       window.location.reload();
     });
@@ -158,7 +163,7 @@ export function SettingsPanel({
           <div>
             <h2 className="text-2xl font-black">Account tools</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Supabase connection status: connected through public anon key.
+              Manage your saved progress and account details.
             </p>
           </div>
 
@@ -192,7 +197,7 @@ export function SettingsPanel({
               <p className="text-sm font-medium">Reset only your progress?</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Subjects, chapters, exercises, and other students stay safe.
-                Your progress rows are the only thing deleted.
+                Only your saved progress is deleted.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button

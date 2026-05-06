@@ -80,8 +80,8 @@ export function PrintablePack({
         <section className="rounded-lg border border-dashed bg-card p-8 text-center">
           <h2 className="text-2xl font-black">Ready when you are.</h2>
           <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-            Click generate to build the pack from your current Supabase
-            progress. Save as PDF from the browser print dialog.
+            Click generate to build the pack from your current progress. Save as
+            PDF from the browser print dialog.
           </p>
         </section>
       )}

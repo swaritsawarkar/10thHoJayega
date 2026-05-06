@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { ExternalLinkIcon, SaveIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { PrintButton } from "@/components/app/print-button";
 import { ProgressBadge } from "@/components/app/progress-badge";
@@ -15,7 +14,11 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
-import { createClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabase,
+  notifyError,
+  notifySuccess,
+} from "@/lib/client-effects";
 import type { Chapter, ProgressStatus, Subject } from "@/types/app";
 
 const revisionChecklist = [
@@ -26,19 +29,21 @@ const revisionChecklist = [
   "Do one timed board-style recap before calling it board ready.",
 ];
 
+export type ChapterDetailClientProps = {
+  userId: string;
+  subject: Subject;
+  chapter: Chapter;
+  initialStatus: ProgressStatus;
+  initialNote: string;
+};
+
 export function ChapterDetailClient({
   userId,
   subject,
   chapter,
   initialStatus,
   initialNote,
-}: {
-  userId: string;
-  subject: Subject;
-  chapter: Chapter;
-  initialStatus: ProgressStatus;
-  initialNote: string;
-}) {
+}: ChapterDetailClientProps) {
   const [status, setStatus] = useState(initialStatus);
   const [note, setNote] = useState(initialNote);
   const [checkedRevisionItems, setCheckedRevisionItems] = useState<string[]>(
@@ -56,7 +61,7 @@ export function ChapterDetailClient({
 
   function saveNote() {
     startTransition(async () => {
-      const supabase = createClient();
+      const supabase = await getBrowserSupabase();
       const { error } = await supabase.from("notes").upsert(
         {
           user_id: userId,
@@ -67,11 +72,11 @@ export function ChapterDetailClient({
       );
 
       if (error) {
-        toast.error("Notes did not save. Try again.");
+        void notifyError("Notes did not save. Try again.");
         return;
       }
 
-      toast.success("Notes saved");
+      void notifySuccess("Notes saved");
     });
   }
 
@@ -131,7 +136,7 @@ export function ChapterDetailClient({
                 Private chapter notes
               </FieldLabel>
               <FieldDescription>
-                Saved per account. Only you can see this through RLS.
+                Saved privately to your account.
               </FieldDescription>
               <Textarea
                 id="chapterNote"
@@ -172,8 +177,8 @@ export function ChapterDetailClient({
           {checkedRevisionItems.length > 0 && (
             <p className="no-print mt-4 text-xs text-muted-foreground">
               {checkedRevisionItems.length}/{revisionChecklist.length} ticked.
-              Notes and chapter status save to Supabase; these checklist ticks
-              reset on refresh.
+              Notes and chapter status are saved. These checklist ticks reset on
+              refresh.
             </p>
           )}
           <noscript>

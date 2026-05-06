@@ -1,11 +1,9 @@
 import { EmptyState } from "@/components/app/empty-state";
-import { HomeworkHelper } from "@/components/app/homework-helper";
+import { HomeworkHelperLoader } from "@/components/app/homework-helper-loader";
 import { getProfile, requireUser } from "@/lib/auth";
 import { isGoogleAiConfigured } from "@/lib/ai-env";
 import { getAppData, getHomeworkHelpUsageCount } from "@/lib/db";
-import {
-  HOMEWORK_HELP_DAILY_LIMIT,
-} from "@/lib/homework-help";
+import { HOMEWORK_HELP_DAILY_LIMIT } from "@/lib/homework-help";
 import { getLanguageSubject } from "@/lib/language-subject";
 
 export default async function HomeworkHelpPage() {
@@ -24,8 +22,7 @@ export default async function HomeworkHelpPage() {
     try {
       usageCount = await getHomeworkHelpUsageCount(user.id);
     } catch {
-      setupIssue =
-        "Run supabase/update-homework-help.sql in Supabase so the daily AI limit can work.";
+      setupIssue = "The daily question counter is not ready yet.";
     }
   }
 
@@ -34,8 +31,8 @@ export default async function HomeworkHelpPage() {
   if (subjects.length === 0) {
     return (
       <EmptyState
-        title="Seed subjects first"
-        description="Homework Help uses your subject/chapter tracker for context. Run the Supabase schema and seed SQL, then come back."
+        title="Load subjects first"
+        description="Homework Help uses your subject and chapter tracker for context. Ask the project owner to load the syllabus, then come back."
         href="/setup"
         action="Open setup"
       />
@@ -43,7 +40,7 @@ export default async function HomeworkHelpPage() {
   }
 
   return (
-    <HomeworkHelper
+    <HomeworkHelperLoader
       subjects={subjects}
       chapters={chapters}
       initialQuestionsLeft={questionsLeft}

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ChapterDetailClient } from "@/components/app/chapter-detail-client";
+import { ChapterDetailClientLoader } from "@/components/app/chapter-detail-client-loader";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getChapterData } from "@/lib/db";
 import {
@@ -30,7 +30,7 @@ export default async function ChapterPage({
   }
 
   return (
-    <ChapterDetailClient
+    <ChapterDetailClientLoader
       userId={user.id}
       subject={data.subject}
       chapter={data.chapter}

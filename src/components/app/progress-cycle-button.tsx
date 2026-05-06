@@ -6,11 +6,14 @@ import {
   CircleDashedIcon,
   RotateCcwIcon,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import { getNextStatus, STATUS_LABELS } from "@/lib/progress";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
+import {
+  getBrowserSupabase,
+  notifyError,
+  notifySuccess,
+} from "@/lib/client-effects";
 import type { ProgressItemType, ProgressStatus } from "@/types/app";
 
 const nextActionLabels: Record<ProgressStatus, string> = {
@@ -56,7 +59,7 @@ export function ProgressCycleButton({
     setStatus(nextStatus);
 
     startTransition(async () => {
-      const supabase = createClient();
+      const supabase = await getBrowserSupabase();
       const { error } = await supabase.from("progress").upsert(
         {
           user_id: userId,
@@ -69,12 +72,12 @@ export function ProgressCycleButton({
 
       if (error) {
         setStatus(previousStatus);
-        toast.error("Save failed. Reverted the status.");
+        void notifyError("Save failed. Reverted the status.");
         return;
       }
 
       onSaved?.(nextStatus);
-      toast.success(`${STATUS_LABELS[nextStatus]} saved`);
+      void notifySuccess(`${STATUS_LABELS[nextStatus]} saved`);
     });
   }
 

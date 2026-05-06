@@ -17,7 +17,7 @@ export function Navbar({
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 xl:flex-row xl:items-center xl:justify-between xl:px-6">
         <div className="flex items-center justify-between gap-3">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-3">
-            <BrandMark className="size-9" />
+            <BrandMark className="size-11" />
             <span className="flex flex-col leading-tight">
               <span className="text-lg font-black">10thHoJayega</span>
               <span className="font-mono text-xs text-muted-foreground">

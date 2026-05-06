@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ChapterAccordion } from "@/components/app/chapter-accordion";
+import { ChapterAccordionLoader } from "@/components/app/chapter-accordion-loader";
 import { ProgressSummary } from "@/components/app/progress-summary";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getSubjectData } from "@/lib/db";
@@ -43,7 +43,7 @@ export default async function SubjectPage({
 
       <ProgressSummary snapshot={snapshot} compact />
 
-      <ChapterAccordion
+      <ChapterAccordionLoader
         userId={user.id}
         subject={subjectData.subject}
         chapters={subjectData.chapters}

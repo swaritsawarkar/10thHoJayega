@@ -9,11 +9,7 @@ import {
   useState,
 } from "react";
 import { useChat } from "@ai-sdk/react";
-import {
-  convertFileListToFileUIParts,
-  DefaultChatTransport,
-  type UIMessage,
-} from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import {
   BotIcon,
   CameraIcon,
@@ -24,7 +20,6 @@ import {
   XIcon,
   UserIcon,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import { ErrorState } from "@/components/app/error-state";
 import { Button } from "@/components/ui/button";
@@ -33,6 +28,7 @@ import {
   HOMEWORK_HELP_ALLOWED_IMAGE_TYPES,
   HOMEWORK_HELP_MAX_IMAGE_BYTES,
 } from "@/lib/homework-help";
+import { notifyError } from "@/lib/client-effects";
 import { cn } from "@/lib/utils";
 import type { Chapter, Subject } from "@/types/app";
 
@@ -82,6 +78,15 @@ function stripOlderImages(messages: UIMessage[]) {
   });
 }
 
+export type HomeworkHelperProps = {
+  subjects: Subject[];
+  chapters: Chapter[];
+  initialQuestionsLeft: number;
+  dailyLimit: number;
+  isAiConfigured: boolean;
+  setupIssue?: string;
+};
+
 export function HomeworkHelper({
   subjects,
   chapters,
@@ -89,14 +94,7 @@ export function HomeworkHelper({
   dailyLimit,
   isAiConfigured,
   setupIssue,
-}: {
-  subjects: Subject[];
-  chapters: Chapter[];
-  initialQuestionsLeft: number;
-  dailyLimit: number;
-  isAiConfigured: boolean;
-  setupIssue?: string;
-}) {
+}: HomeworkHelperProps) {
   const [input, setInput] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
   const [selectedChapterId, setSelectedChapterId] = useState("");
@@ -146,7 +144,7 @@ export function HomeworkHelper({
       }
     },
     onError: (chatError) => {
-      toast.error(chatError.message || "Homework Help could not answer.");
+      void notifyError(chatError.message || "Homework Help could not answer.");
     },
   });
 
@@ -231,8 +229,10 @@ export function HomeworkHelper({
       trimmedInput ||
       "Please read this homework photo first, then help me solve it step by step.";
     const files = selectedFile
-      ? await convertFileListToFileUIParts(
-          fileInputRef.current?.files ?? undefined,
+      ? await import("ai").then(({ convertFileListToFileUIParts }) =>
+          convertFileListToFileUIParts(
+            fileInputRef.current?.files ?? undefined,
+          ),
         )
       : undefined;
 
@@ -257,26 +257,18 @@ export function HomeworkHelper({
             Homework Help
           </p>
           <h1 className="mt-2 text-4xl font-black tracking-normal">
-            AI tutor needs one setup step.
+            Tutor needs one setup step.
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            This feature uses Gemini free tier through a server-only API key.
-            The key never goes in the browser.
+            Homework Help is almost ready. Ask the project owner to turn on the
+            tutor before asking questions.
           </p>
         </section>
 
         <section className="rounded-lg border bg-card p-5">
           <h2 className="text-2xl font-black">Setup required</h2>
           <p className="mt-2 text-muted-foreground">
-            {setupIssue ??
-              "Add GOOGLE_GENERATIVE_AI_API_KEY to .env.local and to Vercel environment variables."}
-          </p>
-          <pre className="mt-4 overflow-x-auto rounded-md border bg-muted p-4 text-sm">
-            <code>GOOGLE_GENERATIVE_AI_API_KEY=</code>
-          </pre>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Get the key from Google AI Studio, restart the dev server, then come
-            back here.
+            {setupIssue ?? "The tutor is not turned on yet."}
           </p>
         </section>
       </div>
@@ -308,8 +300,8 @@ export function HomeworkHelper({
                 subject.
               </p>
               <p className="mt-2 text-xs text-muted-foreground">
-                Photo mode is session-only. The image is sent to Gemini for this
-                answer and is not saved to Supabase.
+                Photo mode is session-only. The image is used for this answer
+                and is not saved.
               </p>
             </div>
             <span className="rounded-md border bg-muted px-2 py-1 font-mono text-xs">
@@ -375,7 +367,7 @@ export function HomeworkHelper({
           <div>
             <h2 className="text-xl font-black">Tutor chat</h2>
             <p className="text-sm text-muted-foreground">
-              Session-only chat. Nothing here is saved to Supabase.
+              Session-only chat. Clear it whenever you want a fresh start.
             </p>
           </div>
           <div className="flex gap-2">
@@ -477,7 +469,7 @@ export function HomeworkHelper({
           {questionsLeft <= 0 && (
             <ErrorState
               title="Daily limit reached"
-              message="You used today's 10 free Homework Help questions. The limit protects the free Gemini quota."
+              message="You used today's 10 Homework Help questions. Try again tomorrow."
             />
           )}
         </div>
@@ -507,7 +499,7 @@ export function HomeworkHelper({
                     {selectedFile.name || "Homework photo"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatFileSize(selectedFile.size)} · used for this answer
+                    {formatFileSize(selectedFile.size)} - used for this answer
                     only
                   </p>
                 </div>

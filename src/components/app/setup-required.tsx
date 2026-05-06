@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertCircleIcon, ExternalLinkIcon } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 
 import { getMissingSupabaseEnvVars } from "@/lib/env";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -25,49 +25,37 @@ export function SetupRequired() {
                 Setup required
               </p>
               <h1 className="text-3xl font-black tracking-normal">
-                Supabase is not connected yet.
+                Account setup is not ready yet.
               </h1>
               <p className="text-muted-foreground">
-                10thHoJayega uses Supabase for real auth and real progress. No
-                fake login, no localStorage jugaad.
+                The project owner still needs to finish private account and
+                progress settings before students can log in.
               </p>
             </div>
           </div>
 
           <Alert>
-            <AlertTitle>Missing environment variables</AlertTitle>
+            <AlertTitle>Setup items missing</AlertTitle>
             <AlertDescription>
-              <ul className="mt-2 flex flex-col gap-1 font-mono text-sm">
-                {missing.map((key) => (
-                  <li key={key}>{key}</li>
-                ))}
-              </ul>
+              {missing.length} private setting
+              {missing.length === 1 ? "" : "s"} need
+              {missing.length === 1 ? "s" : ""} to be added before sign in can
+              work.
             </AlertDescription>
           </Alert>
 
           <div className="flex flex-col gap-3 rounded-md border bg-muted/40 p-4 text-sm">
             <p className="font-semibold">What to do next</p>
             <p className="text-muted-foreground">
-              Create a Supabase project, copy the project URL and anon public
-              key, add them to <code>.env.local</code>, run the SQL files, then
-              restart the dev server.
+              Ask the project owner to finish setup, load the syllabus data, and
+              restart the site.
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button render={<Link href="/setup" />}>Open setup guide</Button>
-            <Button
-              render={
-                <a
-                  href="https://supabase.com/dashboard/projects"
-                  target="_blank"
-                  rel="noreferrer"
-                />
-              }
-              variant="outline"
-            >
-              Supabase dashboard
-              <ExternalLinkIcon data-icon="inline-end" aria-hidden="true" />
+            <Button variant="outline" render={<Link href="/" />}>
+              Back home
             </Button>
           </div>
         </div>

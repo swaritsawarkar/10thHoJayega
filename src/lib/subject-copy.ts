@@ -13,7 +13,9 @@ const cleanSubjectDescriptions: Record<string, string> = {
 const sampleDataCopyPattern =
   /\b(sample|verify official syllabus|verify against official|tracker testing)\b/i;
 
-export function getSubjectDescription(subject: Pick<Subject, "id" | "description">) {
+export function getSubjectDescription(
+  subject: Pick<Subject, "id" | "description">,
+) {
   const description = subject.description?.trim();
 
   if (!description || sampleDataCopyPattern.test(description)) {

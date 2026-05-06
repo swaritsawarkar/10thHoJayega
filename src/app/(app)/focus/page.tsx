@@ -1,8 +1,8 @@
-import { FocusTimer } from "@/components/app/focus-timer";
+import { FocusTimerLoader } from "@/components/app/focus-timer-loader";
 import { requireUser } from "@/lib/auth";
 
 export default async function FocusPage() {
   const user = await requireUser();
 
-  return <FocusTimer userId={user.id} />;
+  return <FocusTimerLoader userId={user.id} />;
 }

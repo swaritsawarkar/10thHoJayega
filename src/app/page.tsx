@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowRightIcon,
   BookOpenCheckIcon,
@@ -14,6 +15,12 @@ import {
 import { BrandMark } from "@/components/app/brand-mark";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { getHomeJsonLd, serializeJsonLd, siteConfig } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Class 10 Syllabus Tracker",
+  description: siteConfig.description,
+};
 
 const features = [
   {
@@ -49,8 +56,16 @@ const features = [
 ];
 
 export default function Home() {
+  const jsonLd = getHomeJsonLd();
+
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(jsonLd),
+        }}
+      />
       <header className="border-b">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-6">
           <Link href="/" className="flex items-center gap-3">
@@ -75,7 +90,7 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-12 lg:grid-cols-[1fr_0.9fr] lg:px-6 lg:py-20">
         <div className="flex flex-col justify-center gap-7">
           <div className="flex flex-col gap-4">
-            <BrandMark className="size-14" />
+            <BrandMark className="size-18" />
             <h1 className="max-w-4xl text-5xl font-black leading-none tracking-normal md:text-7xl">
               10thHoJayega
             </h1>
