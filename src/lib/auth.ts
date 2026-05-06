@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
 
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import type { UserProfile } from "@/types/app";
 
-export async function getCurrentUser(): Promise<User | null> {
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   if (!isSupabaseConfigured()) {
     return null;
   }
@@ -20,9 +21,9 @@ export async function getCurrentUser(): Promise<User | null> {
   } = await supabase.auth.getUser();
 
   return user;
-}
+});
 
-export async function requireUser() {
+export const requireUser = cache(async () => {
   if (!isSupabaseConfigured()) {
     redirect("/setup");
   }
@@ -33,19 +34,21 @@ export async function requireUser() {
   }
 
   return user;
-}
+});
 
-export async function getProfile(userId: string): Promise<UserProfile | null> {
-  const supabase = await createClient();
-  if (!supabase) {
-    return null;
-  }
+export const getProfile = cache(
+  async (userId: string): Promise<UserProfile | null> => {
+    const supabase = await createClient();
+    if (!supabase) {
+      return null;
+    }
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle();
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
 
-  return data;
-}
+    return data;
+  },
+);
