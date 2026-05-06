@@ -5,6 +5,7 @@ import "./globals.css";
 import { LazyToaster } from "@/components/ui/lazy-toaster";
 import { siteConfig } from "@/lib/seo";
 import { themeInitScript } from "@/lib/theme";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,6 +85,7 @@ export default function RootLayout({
         />
         {children}
         <LazyToaster />
+        <SpeedInsights />
       </body>
     </html>
   );
