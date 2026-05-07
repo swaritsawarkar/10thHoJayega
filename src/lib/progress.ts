@@ -27,7 +27,9 @@ export const STATUS_SHORT_LABELS: Record<ProgressStatus, string> = {
 
 export const PROGRESS_STATUSES = [0, 1, 2, 3, 4] as const;
 
-export function toProgressStatus(status: number | null | undefined) {
+export function toProgressStatus(
+  status: number | null | undefined,
+): ProgressStatus {
   if (status === 1 || status === 2 || status === 3 || status === 4) {
     return status;
   }
@@ -43,7 +45,7 @@ export function getStatusForItem(
   progress: UserProgress[],
   itemType: ProgressItemType,
   itemId: string,
-) {
+): ProgressStatus {
   return toProgressStatus(
     progress.find((row) => row.item_type === itemType && row.item_id === itemId)
       ?.status,

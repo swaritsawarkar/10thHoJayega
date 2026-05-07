@@ -26,7 +26,7 @@ const navItems = [
   },
   { href: "/focus", label: "Focus", icon: TimerIcon },
   { href: "/textbooks", label: "Textbooks", icon: LibraryIcon },
-  { href: "/print", label: "Print", icon: PrinterIcon },
+  { href: "/print", label: "Planner", icon: PrinterIcon },
   { href: "/printable-pack", label: "Printable Pack", icon: GaugeIcon },
   { href: "/feedback", label: "Feedback", icon: MessageSquarePlusIcon },
   { href: "/settings", label: "Settings", icon: SettingsIcon },

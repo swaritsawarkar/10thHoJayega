@@ -1,5 +1,9 @@
 import { ProgressBadge } from "@/components/app/progress-badge";
 import { PrintButton } from "@/components/app/print-button";
+import {
+  getChapterGroups,
+  getSubjectSupportNote,
+} from "@/lib/chapter-sections";
 import { getExercisesForChapter, getStatusForItem } from "@/lib/progress";
 import type {
   Chapter,
@@ -102,43 +106,61 @@ export function PrintableSheet({
             const subjectChapters = chapters.filter(
               (chapter) => chapter.subject_id === subject.id,
             );
+            const subjectGroups = getChapterGroups(subject.id, subjectChapters);
+            const supportNote = getSubjectSupportNote(subject.id);
 
             return (
               <div key={subject.id} className="print-break-inside">
                 <h3 className="mb-2 text-lg font-black">{subject.name}</h3>
-                <div className="overflow-x-auto">
-                  <table className="print-table w-full text-left text-sm">
-                    <thead>
-                      <tr>
-                        <th>Done</th>
-                        <th>No.</th>
-                        <th>Chapter</th>
-                        <th>Current app status</th>
-                        <th>Revision date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {subjectChapters.map((chapter) => (
-                        <tr key={chapter.id}>
-                          <td>
-                            <span className="manual-box" />
-                          </td>
-                          <td>{chapter.chapter_number ?? "-"}</td>
-                          <td>{chapter.title}</td>
-                          <td>
-                            <ProgressBadge
-                              status={getStatusForItem(
-                                progress,
-                                "chapter",
-                                chapter.id,
-                              )}
-                            />
-                          </td>
-                          <td className="revision-cell" />
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {supportNote && (
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    {supportNote}
+                  </p>
+                )}
+                <div className="flex flex-col gap-4">
+                  {subjectGroups.map((group) => (
+                    <div key={group.section?.id ?? subject.id}>
+                      {group.section && (
+                        <h4 className="mb-2 text-sm font-black">
+                          {group.section.title}
+                        </h4>
+                      )}
+                      <div className="overflow-x-auto">
+                        <table className="print-table w-full text-left text-sm">
+                          <thead>
+                            <tr>
+                              <th>Done</th>
+                              <th>No.</th>
+                              <th>Chapter</th>
+                              <th>Current app status</th>
+                              <th>Revision date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {group.chapters.map((chapter) => (
+                              <tr key={chapter.id}>
+                                <td>
+                                  <span className="manual-box" />
+                                </td>
+                                <td>{chapter.chapter_number ?? "-"}</td>
+                                <td>{chapter.title}</td>
+                                <td>
+                                  <ProgressBadge
+                                    status={getStatusForItem(
+                                      progress,
+                                      "chapter",
+                                      chapter.id,
+                                    )}
+                                  />
+                                </td>
+                                <td className="revision-cell" />
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             );

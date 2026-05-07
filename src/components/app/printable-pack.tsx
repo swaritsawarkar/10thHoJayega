@@ -41,8 +41,8 @@ export function PrintablePack({
               Printable Pack
             </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              A personalized printable checklist built from your current
-              syllabus progress.
+              The full syllabus pack: every chapter, subject sections, and the
+              Maths exercise tracker in one PDF-friendly checklist.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -71,7 +71,7 @@ export function PrintablePack({
       {generated ? (
         <PrintableSheet
           title="Printable Pack"
-          subtitle="Only the full syllabus checklist and Maths exercise tracker. No filler pages."
+          subtitle="Full subject-by-subject syllabus checklist with the Maths exercise tracker. Use Print Planner for a shorter today-only sheet."
           userLabel={userLabel}
           generatedDate={generatedDate}
           subjects={subjects}
@@ -85,8 +85,8 @@ export function PrintablePack({
         <section className="rounded-lg border border-dashed bg-card p-8 text-center">
           <h2 className="text-2xl font-black">Ready when you are.</h2>
           <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-            Click generate to build the pack from your current progress. Save as
-            PDF from the browser print dialog.
+            Click generate to build the full pack from your current progress.
+            Save as PDF from the browser print dialog.
           </p>
         </section>
       )}

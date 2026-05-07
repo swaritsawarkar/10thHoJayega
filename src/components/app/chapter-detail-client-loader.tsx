@@ -15,7 +15,7 @@ export function ChapterDetailClientLoader(props: ChapterDetailClientProps) {
     <Suspense
       fallback={<div className="h-[380px] rounded-lg border bg-card" />}
     >
-      <ChapterDetailClient {...props} />
+      <ChapterDetailClient key={props.chapter.id} {...props} />
     </Suspense>
   );
 }

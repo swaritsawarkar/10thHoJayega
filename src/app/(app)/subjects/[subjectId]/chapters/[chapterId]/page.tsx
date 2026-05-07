@@ -24,6 +24,7 @@ export default async function ChapterPage({
     !data?.chapter ||
     !data.subject ||
     data.subject.id !== subjectId ||
+    data.chapter.subject_id !== subjectId ||
     !isSubjectVisibleForLanguage(data.subject.id, languageSubject)
   ) {
     notFound();
