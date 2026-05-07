@@ -24,6 +24,7 @@ import {
   isSubjectVisibleForLanguage,
 } from "@/lib/language-subject";
 import { createClient } from "@/lib/supabase/server";
+import { getCanonicalChapter, getCanonicalSubject } from "@/lib/syllabus-data";
 import type { Chapter, Subject } from "@/types/app";
 
 export const runtime = "nodejs";
@@ -320,10 +321,18 @@ async function getHomeworkContext({
   subjectId: string | null;
   chapterId: string | null;
   userId: string;
-}): Promise<{ context: HomeworkHelpContext; error?: string }> {
+}): Promise<{
+  context: HomeworkHelpContext;
+  usageChapterId: string | null;
+  error?: string;
+}> {
   const supabase = await createClient();
   if (!supabase) {
-    return { context: {}, error: "Study data is not connected yet." };
+    return {
+      context: {},
+      usageChapterId: null,
+      error: "Study data is not connected yet.",
+    };
   }
 
   const userProfile = await getProfile(userId);
@@ -337,22 +346,37 @@ async function getHomeworkContext({
     if (!isSubjectVisibleForLanguage(subjectId, languageSubject)) {
       return {
         context: {},
+        usageChapterId: null,
         error: "That subject is not available for your language setting.",
       };
     }
 
-    const { data, error } = await supabase
-      .from("subjects")
-      .select("id,name")
-      .eq("id", subjectId)
-      .maybeSingle();
+    const canonicalSubject = getCanonicalSubject(subjectId);
+    if (canonicalSubject) {
+      subject = {
+        id: canonicalSubject.id,
+        name: canonicalSubject.name,
+      };
+    } else {
+      const { data, error } = await supabase
+        .from("subjects")
+        .select("id,name")
+        .eq("id", subjectId)
+        .maybeSingle();
 
-    if (error || !data) {
-      return { context: {}, error: "Selected subject was not found." };
+      if (error || !data) {
+        return {
+          context: {},
+          usageChapterId: null,
+          error: "Selected subject was not found.",
+        };
+      }
+
+      subject = data;
     }
-
-    subject = data;
   }
+
+  let usageChapterId: string | null = null;
 
   if (chapterId) {
     const { data, error } = await supabase
@@ -360,43 +384,70 @@ async function getHomeworkContext({
       .select("id,title,chapter_number,subject_id")
       .eq("id", chapterId)
       .maybeSingle();
+    const canonicalChapter = getCanonicalChapter(chapterId);
+    const selectedChapter = data ?? canonicalChapter;
 
-    if (error || !data) {
-      return { context: {}, error: "Selected chapter was not found." };
-    }
-
-    if (subjectId && data.subject_id !== subjectId) {
+    if (error || !selectedChapter) {
       return {
         context: {},
+        usageChapterId: null,
+        error: "Selected chapter was not found.",
+      };
+    }
+
+    if (subjectId && selectedChapter.subject_id !== subjectId) {
+      return {
+        context: {},
+        usageChapterId: null,
         error: "Selected chapter does not belong to the selected subject.",
       };
     }
 
-    if (!isSubjectVisibleForLanguage(data.subject_id, languageSubject)) {
+    if (
+      !isSubjectVisibleForLanguage(selectedChapter.subject_id, languageSubject)
+    ) {
       return {
         context: {},
+        usageChapterId: null,
         error: "That chapter is not available for your language setting.",
       };
     }
 
-    chapter = data;
+    usageChapterId = data?.id ?? null;
+    chapter = {
+      id: selectedChapter.id,
+      title: selectedChapter.title,
+      chapter_number: selectedChapter.chapter_number,
+    };
 
     if (!subject) {
-      const { data: chapterSubject, error: subjectError } = await supabase
-        .from("subjects")
-        .select("id,name")
-        .eq("id", data.subject_id)
-        .maybeSingle();
+      const canonicalSubject = getCanonicalSubject(selectedChapter.subject_id);
+      if (canonicalSubject) {
+        subject = {
+          id: canonicalSubject.id,
+          name: canonicalSubject.name,
+        };
+      } else {
+        const { data: chapterSubject, error: subjectError } = await supabase
+          .from("subjects")
+          .select("id,name")
+          .eq("id", selectedChapter.subject_id)
+          .maybeSingle();
 
-      if (subjectError || !chapterSubject) {
-        return { context: {}, error: "Chapter subject was not found." };
+        if (subjectError || !chapterSubject) {
+          return {
+            context: {},
+            usageChapterId: null,
+            error: "Chapter subject was not found.",
+          };
+        }
+
+        subject = chapterSubject;
       }
-
-      subject = chapterSubject;
     }
   }
 
-  return { context: { subject, chapter } };
+  return { context: { subject, chapter }, usageChapterId };
 }
 
 export async function POST(request: Request) {
@@ -434,7 +485,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const { context, error: contextError } = await getHomeworkContext({
+  const {
+    context,
+    usageChapterId,
+    error: contextError,
+  } = await getHomeworkContext({
     subjectId: parsedRequest.body.subjectId,
     chapterId: parsedRequest.body.chapterId,
     userId: user.id,
@@ -459,7 +514,7 @@ export async function POST(request: Request) {
       await supabase.from("homework_help_usage").insert({
         user_id: user.id,
         subject_id: context.subject?.id ?? null,
-        chapter_id: context.chapter?.id ?? null,
+        chapter_id: usageChapterId,
       });
     },
   });

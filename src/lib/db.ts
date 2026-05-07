@@ -9,6 +9,15 @@ import {
   type LanguageSubject,
 } from "@/lib/language-subject";
 import { getHomeworkHelpDayStartIso } from "@/lib/homework-help";
+import {
+  getCanonicalChapter,
+  getCanonicalSubject,
+  mergeChaptersWithCanonical,
+  mergeExercisesWithCanonical,
+  mergeSubjectChaptersWithCanonical,
+  mergeSubjectExercisesWithCanonical,
+  mergeSubjectsWithCanonical,
+} from "@/lib/syllabus-data";
 import type {
   Chapter,
   Exercise,
@@ -116,18 +125,20 @@ export const getAppData = cache(
           .order("updated_at", { ascending: false }),
       ]);
 
-    const subjects = ensureResult(
-      subjectsResult,
-      "Could not load subjects",
-    ) as Subject[];
-    const chapters = ensureResult(
-      chaptersResult,
-      "Could not load chapters",
-    ) as Chapter[];
-    const exercises = ensureResult(
-      exercisesResult,
-      "Could not load exercises",
-    ) as Exercise[];
+    const subjects = mergeSubjectsWithCanonical(
+      ensureResult(subjectsResult, "Could not load subjects") as Subject[],
+    );
+    const chapters = mergeChaptersWithCanonical(
+      ensureResult(chaptersResult, "Could not load chapters") as Chapter[],
+    );
+    const exercises = includeExercises
+      ? mergeExercisesWithCanonical(
+          ensureResult(
+            exercisesResult,
+            "Could not load exercises",
+          ) as Exercise[],
+        )
+      : [];
     const visibleSubjects = languageSubject
       ? filterSubjectsForLanguage(subjects, languageSubject)
       : subjects;
@@ -191,14 +202,13 @@ export const getSubjectData = cache(
         .order("updated_at", { ascending: false }),
     ]);
 
-    const subject = ensureResult(
-      subjectResult,
-      "Could not load subject",
-    ) as Subject | null;
-    const chapters = ensureResult(
-      chaptersResult,
-      "Could not load chapters",
-    ) as Chapter[];
+    const subject =
+      getCanonicalSubject(subjectId) ??
+      (ensureResult(subjectResult, "Could not load subject") as Subject | null);
+    const chapters = mergeSubjectChaptersWithCanonical(
+      subjectId,
+      ensureResult(chaptersResult, "Could not load chapters") as Chapter[],
+    );
 
     let exercises: Exercise[] = [];
     if (subject?.id === "maths" && chapters.length > 0) {
@@ -211,10 +221,10 @@ export const getSubjectData = cache(
         )
         .order("sort_order");
 
-      exercises = ensureResult(
-        exercisesResult,
-        "Could not load exercises",
-      ) as Exercise[];
+      exercises = mergeSubjectExercisesWithCanonical(
+        subject.id,
+        ensureResult(exercisesResult, "Could not load exercises") as Exercise[],
+      );
     }
 
     return {
@@ -263,10 +273,11 @@ export const getChapterData = cache(
           .maybeSingle(),
       ]);
 
-    const chapter = ensureResult<Chapter | null>(
+    const dbChapter = ensureResult<Chapter | null>(
       chapterResult,
       "Could not load chapter",
     );
+    const chapter = getCanonicalChapter(chapterId) ?? dbChapter;
 
     if (!chapter) {
       return null;
@@ -274,10 +285,9 @@ export const getChapterData = cache(
 
     return {
       chapter,
-      subject: ensureResult<Subject | null>(
-        subjectResult,
-        "Could not load subject",
-      ),
+      subject:
+        getCanonicalSubject(subjectId) ??
+        ensureResult<Subject | null>(subjectResult, "Could not load subject"),
       progress: ensureResult<UserProgress | null>(
         progressResult,
         "Could not load progress",
