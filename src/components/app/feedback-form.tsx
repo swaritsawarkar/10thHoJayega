@@ -77,7 +77,9 @@ export function FeedbackForm({ feedbackEmail }: { feedbackEmail: string }) {
     } catch (error) {
       setStatus("error");
       setStatusMessage(
-        error instanceof Error ? error.message : "Feedback could not be sent.",
+        error instanceof Error
+          ? error.message
+          : "Feedback could not be sent. Email sending is not set up.",
       );
     } finally {
       setIsSubmitting(false);

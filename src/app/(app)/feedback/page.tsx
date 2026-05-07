@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { MailIcon, MessageSquarePlusIcon, SparklesIcon } from "lucide-react";
 
 import { FeedbackForm } from "@/components/app/feedback-form";
-import { requireUser } from "@/lib/auth";
 
 const feedbackEmail =
   process.env.FEEDBACK_TO_EMAIL?.trim() || "sawarkarswarit@gmail.com";
@@ -16,9 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function FeedbackPage() {
-  await requireUser();
-
+export default function FeedbackPage() {
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-lg border bg-card p-5">

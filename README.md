@@ -98,7 +98,7 @@ FEEDBACK_TO_EMAIL=sawarkarswarit@gmail.com
 ```
 
 Do not expose a Supabase service role key in this project. Do not prefix the Gemini key with `NEXT_PUBLIC_`; it must stay server-only.
-Set `RESEND_API_KEY` and `FEEDBACK_FROM_EMAIL` for first-party feedback email delivery. Without Resend, feedback falls back to FormSubmit and the destination inbox may need to approve the first activation email.
+Set `RESEND_API_KEY` and `FEEDBACK_FROM_EMAIL` for feedback email delivery. `RESEND_API_KEY` is the private key from Resend, the email-sending service. Without it, the app will not claim feedback was sent.
 
 ## Run Schema SQL
 

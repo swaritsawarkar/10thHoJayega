@@ -133,7 +133,7 @@ function buildFeedbackEmail({
   return { subject, text, html };
 }
 
-async function sendWithResend({
+async function sendFeedbackEmail({
   subject,
   text,
   html,
@@ -147,7 +147,9 @@ async function sendWithResend({
   const apiKey = process.env.RESEND_API_KEY?.trim();
 
   if (!apiKey) {
-    return false;
+    throw new Error(
+      "Email is not set up yet. Add RESEND_API_KEY in Vercel and .env.local.",
+    );
   }
 
   const response = await fetch("https://api.resend.com/emails", {
@@ -171,48 +173,6 @@ async function sendWithResend({
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(errorText || "Resend rejected the feedback email.");
-  }
-
-  return true;
-}
-
-async function sendWithFormSubmit({
-  subject,
-  text,
-  displayName,
-  userEmail,
-}: {
-  subject: string;
-  text: string;
-  displayName: string;
-  userEmail: string;
-}) {
-  const formBody = new URLSearchParams({
-    name: displayName,
-    email: userEmail,
-    message: text,
-    _subject: subject,
-    _template: "table",
-    _captcha: "false",
-  });
-
-  const response = await fetch(
-    `https://formsubmit.co/ajax/${encodeURIComponent(getFeedbackEmail())}`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-      body: formBody,
-    },
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      errorText || "Feedback email service rejected the message.",
-    );
   }
 }
 
@@ -238,21 +198,12 @@ export async function POST(request: Request) {
   });
 
   try {
-    const sentWithResend = await sendWithResend({
+    await sendFeedbackEmail({
       subject: email.subject,
       text: email.text,
       html: email.html,
       userEmail,
     });
-
-    if (!sentWithResend) {
-      await sendWithFormSubmit({
-        subject: email.subject,
-        text: email.text,
-        displayName,
-        userEmail,
-      });
-    }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Feedback could not be emailed.";
