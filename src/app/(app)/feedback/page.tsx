@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { MailIcon, MessageSquarePlusIcon, SparklesIcon } from "lucide-react";
 
 import { FeedbackForm } from "@/components/app/feedback-form";
-import { getProfile, requireUser } from "@/lib/auth";
-import { getDisplayName } from "@/lib/progress";
+import { requireUser } from "@/lib/auth";
 
-const feedbackEmail = "sawarkarswarit@gmail.com";
+const feedbackEmail =
+  process.env.FEEDBACK_TO_EMAIL?.trim() || "sawarkarswarit@gmail.com";
 
 export const metadata: Metadata = {
   title: "Feedback",
@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FeedbackPage() {
-  const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const displayName = getDisplayName(user.email, profile?.display_name);
+  await requireUser();
 
   return (
     <div className="flex flex-col gap-6">
@@ -35,11 +33,7 @@ export default async function FeedbackPage() {
       </section>
 
       <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.45fr)]">
-        <FeedbackForm
-          feedbackEmail={feedbackEmail}
-          userEmail={user.email ?? "student"}
-          displayName={displayName}
-        />
+        <FeedbackForm feedbackEmail={feedbackEmail} />
 
         <aside className="rounded-lg border bg-card p-5">
           <div className="flex items-center gap-3">

@@ -1,18 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ClipboardPenLineIcon, MailIcon, SendIcon } from "lucide-react";
+import { useState } from "react";
+import {
+  ClipboardPenLineIcon,
+  Loader2Icon,
+  MailIcon,
+  SendIcon,
+} from "lucide-react";
 
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const feedbackTypes = [
   "UI issue",
@@ -22,34 +27,62 @@ const feedbackTypes = [
   "Other",
 ];
 
-export function FeedbackForm({
-  feedbackEmail,
-  userEmail,
-  displayName,
-}: {
-  feedbackEmail: string;
-  userEmail: string;
-  displayName: string;
-}) {
+export function FeedbackForm({ feedbackEmail }: { feedbackEmail: string }) {
   const [type, setType] = useState(feedbackTypes[0]);
   const [location, setLocation] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canSend = message.trim().length > 0;
 
-  const mailtoHref = useMemo(() => {
-    const subject = `10thHoJayega feedback: ${type}`;
-    const body = [
-      `From: ${displayName} <${userEmail}>`,
-      `Type: ${type}`,
-      `Place: ${location.trim() || "Not specified"}`,
-      "",
-      "Feedback:",
-      message.trim(),
-    ].join("\n");
+  async function sendFeedback(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-    return `mailto:${feedbackEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }, [displayName, feedbackEmail, location, message, type, userEmail]);
+    if (!canSend || isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setStatus("idle");
+    setStatusMessage("");
+
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type,
+          location,
+          message,
+        }),
+      });
+
+      const result = (await response.json().catch(() => null)) as {
+        error?: string;
+        to?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Feedback could not be sent.");
+      }
+
+      setStatus("success");
+      setStatusMessage(`Sent to ${result?.to || feedbackEmail}.`);
+      setLocation("");
+      setMessage("");
+    } catch (error) {
+      setStatus("error");
+      setStatusMessage(
+        error instanceof Error ? error.message : "Feedback could not be sent.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <section className="min-w-0 rounded-lg border bg-card p-5">
@@ -65,10 +98,7 @@ export function FeedbackForm({
         </div>
       </div>
 
-      <form
-        className="flex flex-col gap-5"
-        onSubmit={(event) => event.preventDefault()}
-      >
+      <form className="flex flex-col gap-5" onSubmit={sendFeedback}>
         <FieldGroup>
           <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <Field>
@@ -115,8 +145,18 @@ export function FeedbackForm({
             <FieldDescription>
               {message.length}/3000 characters
             </FieldDescription>
+            {status === "error" && <FieldError>{statusMessage}</FieldError>}
           </Field>
         </FieldGroup>
+
+        {status === "success" && (
+          <p
+            className="rounded-md border border-primary/40 bg-primary/10 p-3 text-sm"
+            role="status"
+          >
+            {statusMessage}
+          </p>
+        )}
 
         <div className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="min-w-0 text-sm text-muted-foreground">
@@ -126,24 +166,23 @@ export function FeedbackForm({
             />
             {feedbackEmail}
           </p>
-          <a
-            data-testid="feedback-mailto-link"
-            href={canSend ? mailtoHref : undefined}
-            aria-disabled={!canSend}
-            tabIndex={canSend ? undefined : -1}
-            onClick={(event) => {
-              if (!canSend) {
-                event.preventDefault();
-              }
-            }}
-            className={cn(
-              buttonVariants({ className: "w-full sm:w-fit" }),
-              !canSend && "pointer-events-none opacity-50",
-            )}
+          <Button
+            data-testid="feedback-send-button"
+            type="submit"
+            disabled={!canSend || isSubmitting}
+            className="w-full sm:w-fit"
           >
-            <SendIcon data-icon="inline-start" aria-hidden="true" />
+            {isSubmitting ? (
+              <Loader2Icon
+                data-icon="inline-start"
+                className="animate-spin"
+                aria-hidden="true"
+              />
+            ) : (
+              <SendIcon data-icon="inline-start" aria-hidden="true" />
+            )}
             Send feedback
-          </a>
+          </Button>
         </div>
       </form>
     </section>

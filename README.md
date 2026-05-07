@@ -25,6 +25,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - Official NCERT textbook links page
 - Printable planner
 - Printable Pack with only full syllabus checklist and Maths exercise tracker
+- Feedback form that sends reports to the project inbox
 - Settings page with display name, JSON export, progress reset, and logout
 
 ## Tech Stack
@@ -53,6 +54,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - `/textbooks` official NCERT/CBSE links
 - `/print` printable planner
 - `/printable-pack` Printable Pack
+- `/feedback` send bug reports and feature ideas
 - `/settings` account settings
 
 ## Supabase Setup
@@ -68,6 +70,9 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
+RESEND_API_KEY=
+FEEDBACK_FROM_EMAIL=10thHoJayega <onboarding@resend.dev>
+FEEDBACK_TO_EMAIL=sawarkarswarit@gmail.com
 NEXT_PUBLIC_SITE_URL=https://10thhojayega.vercel.app
 ```
 
@@ -87,9 +92,13 @@ Use `.env.example` as the template:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
+RESEND_API_KEY=
+FEEDBACK_FROM_EMAIL=10thHoJayega <onboarding@resend.dev>
+FEEDBACK_TO_EMAIL=sawarkarswarit@gmail.com
 ```
 
 Do not expose a Supabase service role key in this project. Do not prefix the Gemini key with `NEXT_PUBLIC_`; it must stay server-only.
+Set `RESEND_API_KEY` and `FEEDBACK_FROM_EMAIL` for first-party feedback email delivery. Without Resend, feedback falls back to FormSubmit and the destination inbox may need to approve the first activation email.
 
 ## Run Schema SQL
 
@@ -119,7 +128,7 @@ Open `http://localhost:3000`.
 1. Push this repo to GitHub.
 2. Import it in Vercel.
 3. Add these environment variables in Vercel Project Settings:
-   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, and `NEXT_PUBLIC_SITE_URL`.
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, `RESEND_API_KEY`, `FEEDBACK_FROM_EMAIL`, `FEEDBACK_TO_EMAIL`, and `NEXT_PUBLIC_SITE_URL`.
 4. Deploy.
 
 Set `NEXT_PUBLIC_SITE_URL` to the production origin. Use

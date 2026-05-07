@@ -50,7 +50,7 @@ export default async function LoginPage() {
             className="w-full"
             render={
               <a
-                href="mailto:sawarkarswarit@gmail.com?subject=10thHoJayega%20feedback"
+                href="mailto:sawarkarswarit@gmail.com?subject=10thHoJayega%20feedback&body=I%20need%20help%20with%20login%20or%20signup."
                 data-testid="login-feedback-link"
               />
             }
