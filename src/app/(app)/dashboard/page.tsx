@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   ArrowRightIcon,
   BookOpenIcon,
@@ -8,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { EmptyState } from "@/components/app/empty-state";
+import { LoadingState } from "@/components/app/loading-state";
 import { ProgressSummary } from "@/components/app/progress-summary";
 import { SubjectCard } from "@/components/app/subject-card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +21,15 @@ import {
 } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening dashboard" />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+async function DashboardContent() {
   const user = await requireUser();
   const languageSubject = getLanguageSubject(null, user);
   const languageSubjectLabel = getLanguageSubjectLabel(languageSubject);

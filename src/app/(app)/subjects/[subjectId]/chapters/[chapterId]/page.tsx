@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { ChapterDetailClientLoader } from "@/components/app/chapter-detail-client-loader";
+import { LoadingState } from "@/components/app/loading-state";
 import { requireUser } from "@/lib/auth";
 import { getChapterData } from "@/lib/db";
 import {
@@ -9,7 +11,19 @@ import {
 } from "@/lib/language-subject";
 import { toProgressStatus } from "@/lib/progress";
 
-export default async function ChapterPage({
+export default function ChapterPage({
+  params,
+}: {
+  params: Promise<{ subjectId: string; chapterId: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingState label="Opening chapter" />}>
+      <ChapterContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ChapterContent({
   params,
 }: {
   params: Promise<{ subjectId: string; chapterId: string }>;

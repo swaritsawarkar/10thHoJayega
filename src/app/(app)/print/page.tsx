@@ -1,10 +1,21 @@
+import { Suspense } from "react";
+
+import { LoadingState } from "@/components/app/loading-state";
 import { PrintablePlanner } from "@/components/app/printable-planner";
 import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
-export default async function PrintPage() {
+export default function PrintPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening print planner" />}>
+      <PrintContent />
+    </Suspense>
+  );
+}
+
+async function PrintContent() {
   const user = await requireUser();
   const languageSubject = getLanguageSubject(null, user);
   const metadataDisplayName =

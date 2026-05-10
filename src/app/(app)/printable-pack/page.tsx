@@ -1,10 +1,21 @@
+import { Suspense } from "react";
+
+import { LoadingState } from "@/components/app/loading-state";
 import { PrintablePack } from "@/components/app/printable-pack";
 import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
-export default async function PrintablePackPage() {
+export default function PrintablePackPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening printable pack" />}>
+      <PrintablePackContent />
+    </Suspense>
+  );
+}
+
+async function PrintablePackContent() {
   const user = await requireUser();
   const languageSubject = getLanguageSubject(null, user);
   const metadataDisplayName =

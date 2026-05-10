@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+import { LoadingState } from "@/components/app/loading-state";
 import { SubjectCard } from "@/components/app/subject-card";
 import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
@@ -6,7 +9,15 @@ import {
   getLanguageSubjectLabel,
 } from "@/lib/language-subject";
 
-export default async function SubjectsPage() {
+export default function SubjectsPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening subjects" />}>
+      <SubjectsContent />
+    </Suspense>
+  );
+}
+
+async function SubjectsContent() {
   const user = await requireUser();
   const languageSubject = getLanguageSubject(null, user);
   const languageSubjectLabel = getLanguageSubjectLabel(languageSubject);
