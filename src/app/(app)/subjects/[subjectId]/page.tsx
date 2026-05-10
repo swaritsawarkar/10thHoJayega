@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { ChapterAccordionLoader } from "@/components/app/chapter-accordion-loader";
 import { ProgressSummary } from "@/components/app/progress-summary";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getSubjectData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot } from "@/lib/progress";
@@ -15,8 +15,7 @@ export default async function SubjectPage({
 }) {
   const { subjectId } = await params;
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const subjectData = await getSubjectData(user.id, subjectId, languageSubject);
 
   if (!subjectData.subject) {

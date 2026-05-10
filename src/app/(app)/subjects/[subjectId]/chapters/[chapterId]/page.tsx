@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ChapterDetailClientLoader } from "@/components/app/chapter-detail-client-loader";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getChapterData } from "@/lib/db";
 import {
   getLanguageSubject,
@@ -16,8 +16,7 @@ export default async function ChapterPage({
 }) {
   const { subjectId, chapterId } = await params;
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const data = await getChapterData(user.id, chapterId, subjectId);
 
   if (

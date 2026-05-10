@@ -1,6 +1,6 @@
 import { EmptyState } from "@/components/app/empty-state";
 import { HomeworkHelperLoader } from "@/components/app/homework-helper-loader";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { isGoogleAiConfigured } from "@/lib/ai-env";
 import { getAppData, getHomeworkHelpUsageCount } from "@/lib/db";
 import { HOMEWORK_HELP_DAILY_LIMIT } from "@/lib/homework-help";
@@ -8,8 +8,7 @@ import { getLanguageSubject } from "@/lib/language-subject";
 
 export default async function HomeworkHelpPage() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const { subjects, chapters } = await getAppData(user.id, languageSubject, {
     includeExercises: false,
   });

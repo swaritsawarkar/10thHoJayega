@@ -1,13 +1,16 @@
 import { PrintablePlanner } from "@/components/app/printable-planner";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
 export default async function PrintPage() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
+  const metadataDisplayName =
+    typeof user.user_metadata.display_name === "string"
+      ? user.user_metadata.display_name
+      : null;
   const data = await getAppData(user.id, languageSubject, {
     includeExercises: false,
   });
@@ -19,7 +22,7 @@ export default async function PrintPage() {
 
   return (
     <PrintablePlanner
-      userLabel={getDisplayName(user.email, profile?.display_name)}
+      userLabel={getDisplayName(user.email, metadataDisplayName)}
       generatedDate={new Date().toLocaleDateString("en-IN", {
         year: "numeric",
         month: "short",

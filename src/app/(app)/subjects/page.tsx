@@ -1,5 +1,5 @@
 import { SubjectCard } from "@/components/app/subject-card";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import {
   getLanguageSubject,
@@ -8,8 +8,7 @@ import {
 
 export default async function SubjectsPage() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const languageSubjectLabel = getLanguageSubjectLabel(languageSubject);
   const { subjects, chapters, progress } = await getAppData(
     user.id,
