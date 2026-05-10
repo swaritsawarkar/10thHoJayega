@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/auth";
 import { getDisplayName } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
+export const preferredRegion = "global";
 
 export const metadata: Metadata = {
   robots: {
