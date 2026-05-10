@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpenIcon,
@@ -54,9 +54,24 @@ export function NavLinks() {
           >
             <Icon className="size-4" aria-hidden="true" />
             {item.label}
+            <NavPendingHint />
           </Link>
         );
       })}
     </nav>
+  );
+}
+
+function NavPendingHint() {
+  const { pending } = useLinkStatus();
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "size-1.5 shrink-0 rounded-full bg-current opacity-0 transition-opacity",
+        pending && "animate-pulse opacity-70",
+      )}
+    />
   );
 }

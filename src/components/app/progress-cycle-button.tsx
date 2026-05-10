@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle2Icon,
   CircleDashedIcon,
@@ -41,8 +42,10 @@ export function ProgressCycleButton({
   showHint?: boolean;
   onSaved?: (status: ProgressStatus) => void;
 }) {
+  const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
-  const [isPending, startTransition] = useTransition();
+  const [isSaving, setIsSaving] = useState(false);
+  const [, startRefresh] = useTransition();
   const nextStatus = getNextStatus(status);
   const itemLabel = itemType === "chapter" ? "chapter" : "exercise";
   const actionLabel =
@@ -54,13 +57,16 @@ export function ProgressCycleButton({
         ? CircleDashedIcon
         : CheckCircle2Icon;
 
-  function handleClick() {
+  async function handleClick() {
     const previousStatus = status;
     setStatus(nextStatus);
+    setIsSaving(true);
 
-    startTransition(async () => {
+    let error: { message: string } | null = null;
+
+    try {
       const supabase = await getBrowserSupabase();
-      const { error } = await supabase.from("progress").upsert(
+      const result = await supabase.from("progress").upsert(
         {
           user_id: userId,
           item_type: itemType,
@@ -69,15 +75,23 @@ export function ProgressCycleButton({
         },
         { onConflict: "user_id,item_type,item_id" },
       );
+      error = result.error;
+    } catch {
+      error = { message: "Unexpected save failure" };
+    } finally {
+      setIsSaving(false);
+    }
 
-      if (error) {
-        setStatus(previousStatus);
-        void notifyError("Save failed. Reverted the status.");
-        return;
-      }
+    if (error) {
+      setStatus(previousStatus);
+      void notifyError("Save failed. Reverted the status.");
+      return;
+    }
 
-      onSaved?.(nextStatus);
-      void notifySuccess(`${STATUS_LABELS[nextStatus]} saved`);
+    onSaved?.(nextStatus);
+    void notifySuccess(`${STATUS_LABELS[nextStatus]} saved`);
+    startRefresh(() => {
+      router.refresh();
     });
   }
 
@@ -87,12 +101,12 @@ export function ProgressCycleButton({
         type="button"
         size={size}
         variant={status === 4 ? "default" : "outline"}
-        disabled={isPending}
+        disabled={isSaving}
         onClick={handleClick}
         aria-label={`Current status is ${STATUS_LABELS[status]}. Click to set ${STATUS_LABELS[nextStatus]}.`}
       >
         <Icon data-icon="inline-start" aria-hidden="true" />
-        {isPending ? "Saving" : actionLabel}
+        {isSaving ? "Saving" : actionLabel}
       </Button>
       {showHint && (
         <p className="max-w-48 text-xs leading-snug text-muted-foreground">
