@@ -1,5 +1,6 @@
 "use client";
 
+import { useOptimistic } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -34,18 +35,23 @@ const navItems = [
 
 export function NavLinks() {
   const pathname = usePathname();
+  const [optimisticPathname, setOptimisticPathname] =
+    useOptimistic(pathname);
 
   return (
     <nav className="-mx-1 flex min-w-0 max-w-full gap-1 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 xl:flex-1 xl:justify-center">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
-          pathname === item.href || pathname.startsWith(`${item.href}/`);
+          optimisticPathname === item.href ||
+          optimisticPathname.startsWith(`${item.href}/`);
 
         return (
           <Link
             key={item.href}
             href={item.href}
+            aria-current={isActive ? "page" : undefined}
+            onClick={() => setOptimisticPathname(item.href)}
             className={cn(
               "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:h-8",
               isActive &&
