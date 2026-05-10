@@ -15,7 +15,12 @@ import {
 import { BrandMark } from "@/components/app/brand-mark";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { getHomeJsonLd, serializeJsonLd, siteConfig } from "@/lib/seo";
+import {
+  getHomeJsonLd,
+  publicSeoPages,
+  serializeJsonLd,
+  siteConfig,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Class 10 Syllabus Tracker",
@@ -214,6 +219,43 @@ export default function Home() {
                 </article>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t">
+        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-3xl font-black">
+                Find the planner you need.
+              </h2>
+              <p className="mt-2 max-w-2xl text-muted-foreground">
+                Public study pages for Class 10 tracking, planning, NCERT
+                checklists, Maths practice, and printable revision.
+              </p>
+            </div>
+            <Button variant="outline" render={<Link href="/login" />}>
+              Start tracking
+              <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
+            </Button>
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {publicSeoPages.map((page) => (
+              <Link
+                key={page.slug}
+                href={`/${page.slug}`}
+                className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40"
+              >
+                <p className="font-mono text-xs uppercase text-muted-foreground">
+                  {page.keyword}
+                </p>
+                <h3 className="mt-3 text-xl font-black">{page.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {page.description}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
