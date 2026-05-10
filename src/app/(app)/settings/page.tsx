@@ -1,10 +1,21 @@
+import { Suspense } from "react";
+
 import { SettingsPanel } from "@/components/app/settings-panel";
 import { LogoutButton } from "@/components/app/logout-button";
+import { LoadingState } from "@/components/app/loading-state";
 import { getProfile, requireUser } from "@/lib/auth";
 import { getUserProgress } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 
-export default async function SettingsPage() {
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening settings" />}>
+      <SettingsContent />
+    </Suspense>
+  );
+}
+
+async function SettingsContent() {
   const user = await requireUser();
   const profile = await getProfile(user.id);
   const languageSubject = getLanguageSubject(profile, user);

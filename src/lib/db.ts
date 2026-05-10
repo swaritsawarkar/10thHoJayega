@@ -12,6 +12,7 @@ import { getHomeworkHelpDayStartIso } from "@/lib/homework-help";
 import {
   getCanonicalChapter,
   getCanonicalSubject,
+  MANAGED_SYLLABUS_SUBJECT_IDS,
   mergeChaptersWithCanonical,
   mergeExercisesWithCanonical,
   mergeSubjectChaptersWithCanonical,
@@ -184,6 +185,28 @@ export const getSubjectData = cache(
       };
     }
 
+    const canonicalSubject = getCanonicalSubject(subjectId);
+    if (canonicalSubject && MANAGED_SYLLABUS_SUBJECT_IDS.has(subjectId)) {
+      const progressResult = await supabase
+        .from("progress")
+        .select(progressColumns)
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false });
+
+      return {
+        subject: canonicalSubject,
+        chapters: mergeSubjectChaptersWithCanonical(subjectId, []),
+        exercises:
+          subjectId === "maths"
+            ? mergeSubjectExercisesWithCanonical(subjectId, [])
+            : [],
+        progress: ensureResult(
+          progressResult,
+          "Could not load progress",
+        ) as UserProgress[],
+      };
+    }
+
     const [subjectResult, chaptersResult, progressResult] = await Promise.all([
       supabase
         .from("subjects")
@@ -244,6 +267,36 @@ export const getChapterData = cache(
     const supabase = await createClient();
     if (!supabase) {
       throw new Error("Study data is not connected yet.");
+    }
+
+    const canonicalChapter = getCanonicalChapter(chapterId);
+    const canonicalSubject = getCanonicalSubject(subjectId);
+    if (canonicalChapter && canonicalSubject) {
+      const [progressResult, noteResult] = await Promise.all([
+        supabase
+          .from("progress")
+          .select(progressColumns)
+          .eq("user_id", userId)
+          .eq("item_type", "chapter")
+          .eq("item_id", chapterId)
+          .maybeSingle(),
+        supabase
+          .from("notes")
+          .select(noteColumns)
+          .eq("user_id", userId)
+          .eq("chapter_id", chapterId)
+          .maybeSingle(),
+      ]);
+
+      return {
+        chapter: canonicalChapter,
+        subject: canonicalSubject,
+        progress: ensureResult<UserProgress | null>(
+          progressResult,
+          "Could not load progress",
+        ),
+        note: ensureResult<Note | null>(noteResult, "Could not load notes"),
+      };
     }
 
     const [chapterResult, subjectResult, progressResult, noteResult] =

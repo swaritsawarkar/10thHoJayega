@@ -1,13 +1,27 @@
+import { Suspense } from "react";
+
+import { LoadingState } from "@/components/app/loading-state";
 import { PrintablePack } from "@/components/app/printable-pack";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
-export default async function PrintablePackPage() {
+export default function PrintablePackPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening printable pack" />}>
+      <PrintablePackContent />
+    </Suspense>
+  );
+}
+
+async function PrintablePackContent() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
+  const metadataDisplayName =
+    typeof user.user_metadata.display_name === "string"
+      ? user.user_metadata.display_name
+      : null;
   const data = await getAppData(user.id, languageSubject);
   const snapshot = calculateSnapshot(
     data.subjects,
@@ -17,7 +31,7 @@ export default async function PrintablePackPage() {
 
   return (
     <PrintablePack
-      userLabel={getDisplayName(user.email, profile?.display_name)}
+      userLabel={getDisplayName(user.email, metadataDisplayName)}
       generatedDate={new Date().toLocaleDateString("en-IN", {
         year: "numeric",
         month: "short",

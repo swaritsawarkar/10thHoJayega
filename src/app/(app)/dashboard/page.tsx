@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   ArrowRightIcon,
   BookOpenIcon,
@@ -8,10 +9,11 @@ import {
 } from "lucide-react";
 
 import { EmptyState } from "@/components/app/empty-state";
+import { LoadingState } from "@/components/app/loading-state";
 import { ProgressSummary } from "@/components/app/progress-summary";
 import { SubjectCard } from "@/components/app/subject-card";
 import { Button } from "@/components/ui/button";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getAppData } from "@/lib/db";
 import {
   getLanguageSubject,
@@ -19,11 +21,22 @@ import {
 } from "@/lib/language-subject";
 import { calculateSnapshot, getDisplayName } from "@/lib/progress";
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening dashboard" />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+async function DashboardContent() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const languageSubjectLabel = getLanguageSubjectLabel(languageSubject);
+  const metadataDisplayName =
+    typeof user.user_metadata.display_name === "string"
+      ? user.user_metadata.display_name
+      : null;
   const { subjects, chapters, progress } = await getAppData(
     user.id,
     languageSubject,
@@ -55,7 +68,7 @@ export default async function DashboardPage() {
           <div className="min-w-0">
             <p className="font-mono text-sm text-muted-foreground">Dashboard</p>
             <h1 className="text-3xl font-black tracking-normal sm:text-4xl">
-              Hey {getDisplayName(user.email, profile?.display_name)}.
+              Hey {getDisplayName(user.email, metadataDisplayName)}.
             </h1>
             <p className="mt-2 text-muted-foreground">
               Kal se pakka? Track it today. Language subject:{" "}

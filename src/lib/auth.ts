@@ -16,6 +16,24 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
     return null;
   }
 
+  const claimsResult = await supabase.auth.getClaims();
+  if (claimsResult.data?.claims) {
+    const claims = claimsResult.data.claims;
+
+    return {
+      id: claims.sub,
+      aud: Array.isArray(claims.aud) ? claims.aud[0] : claims.aud,
+      email: claims.email,
+      phone: claims.phone,
+      role: claims.role,
+      app_metadata: claims.app_metadata ?? {},
+      user_metadata: claims.user_metadata ?? {},
+      is_anonymous: claims.is_anonymous,
+      created_at: "",
+      updated_at: "",
+    };
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

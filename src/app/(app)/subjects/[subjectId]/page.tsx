@@ -1,22 +1,35 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { ChapterAccordionLoader } from "@/components/app/chapter-accordion-loader";
+import { LoadingState } from "@/components/app/loading-state";
 import { ProgressSummary } from "@/components/app/progress-summary";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getSubjectData } from "@/lib/db";
 import { getLanguageSubject } from "@/lib/language-subject";
 import { calculateSnapshot } from "@/lib/progress";
 import { getSubjectDescription } from "@/lib/subject-copy";
 
-export default async function SubjectPage({
+export default function SubjectPage({
+  params,
+}: {
+  params: Promise<{ subjectId: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingState label="Opening subject" />}>
+      <SubjectContent params={params} />
+    </Suspense>
+  );
+}
+
+async function SubjectContent({
   params,
 }: {
   params: Promise<{ subjectId: string }>;
 }) {
   const { subjectId } = await params;
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
   const subjectData = await getSubjectData(user.id, subjectId, languageSubject);
 
   if (!subjectData.subject) {

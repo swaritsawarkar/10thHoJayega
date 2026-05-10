@@ -1,11 +1,21 @@
+import { Suspense } from "react";
+
+import { LoadingState } from "@/components/app/loading-state";
 import { TextbookLinks } from "@/components/app/textbook-links";
-import { getProfile, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getLanguageSubject } from "@/lib/language-subject";
 
-export default async function TextbooksPage() {
+export default function TextbooksPage() {
+  return (
+    <Suspense fallback={<LoadingState label="Opening textbooks" />}>
+      <TextbooksContent />
+    </Suspense>
+  );
+}
+
+async function TextbooksContent() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
-  const languageSubject = getLanguageSubject(profile, user);
+  const languageSubject = getLanguageSubject(null, user);
 
   return <TextbookLinks languageSubject={languageSubject} />;
 }

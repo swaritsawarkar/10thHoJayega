@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { DownloadIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
 
 import { DeleteAccountControl } from "@/components/app/delete-account-control";
@@ -38,6 +39,7 @@ export function SettingsPanel({
   progress,
   accountFooter,
 }: SettingsPanelProps) {
+  const router = useRouter();
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [languageSubject, setLanguageSubject] = useState<LanguageSubject>(
     initialLanguageSubject,
@@ -76,6 +78,7 @@ export function SettingsPanel({
           ? "Saved. Language preference will sync fully after the latest account update is applied."
           : "Profile saved",
       );
+      router.refresh();
     });
   }
 
@@ -116,7 +119,7 @@ export function SettingsPanel({
 
       void notifySuccess("Your saved progress was reset");
       setIsConfirmingReset(false);
-      window.location.reload();
+      router.refresh();
     });
   }
 

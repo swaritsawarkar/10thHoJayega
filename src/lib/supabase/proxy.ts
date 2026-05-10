@@ -12,12 +12,25 @@ function hasSupabaseAuthCookie(request: NextRequest) {
     .some((cookie) => supabaseAuthCookiePattern.test(cookie.name));
 }
 
+function isClientRouterRequest(request: NextRequest) {
+  return (
+    request.headers.has("rsc") ||
+    request.headers.has("next-router-state-tree") ||
+    request.headers.has("next-router-prefetch") ||
+    request.headers.get("purpose") === "prefetch"
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   if (!isSupabaseConfigured()) {
     return NextResponse.next({ request });
   }
 
   if (!hasSupabaseAuthCookie(request)) {
+    return NextResponse.next({ request });
+  }
+
+  if (isClientRouterRequest(request)) {
     return NextResponse.next({ request });
   }
 
