@@ -69,6 +69,8 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+# Optional server-only key. Needed only for delete-account admin deletion.
+SUPABASE_SERVICE_ROLE_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
 RESEND_API_KEY=
 FEEDBACK_FROM_EMAIL=10thHoJayega <onboarding@resend.dev>
@@ -91,13 +93,16 @@ Use `.env.example` as the template:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+# Optional server-only key. Needed only for delete-account admin deletion.
+SUPABASE_SERVICE_ROLE_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
 RESEND_API_KEY=
 FEEDBACK_FROM_EMAIL=10thHoJayega <onboarding@resend.dev>
 FEEDBACK_TO_EMAIL=sawarkarswarit@gmail.com
+NEXT_PUBLIC_SITE_URL=https://10thhojayega.vercel.app
 ```
 
-Do not expose a Supabase service role key in this project. Do not prefix the Gemini key with `NEXT_PUBLIC_`; it must stay server-only.
+Do not expose a Supabase service role key to the browser. If you use `SUPABASE_SERVICE_ROLE_KEY`, keep it server-only and never prefix it with `NEXT_PUBLIC_`. Do not prefix the Gemini, Resend, or other private keys with `NEXT_PUBLIC_` either.
 Set `RESEND_API_KEY` and `FEEDBACK_FROM_EMAIL` for feedback email delivery. `RESEND_API_KEY` is the private key from Resend, the email-sending service. Without it, the app will not claim feedback was sent.
 
 ## Run Schema SQL
