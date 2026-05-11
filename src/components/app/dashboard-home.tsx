@@ -86,6 +86,11 @@ export function DashboardHome({
   const completedSubjects = snapshot.subjectPercents.filter(
     (subject) => subject.percent === 100,
   ).length;
+  const weeklyProgress = Math.min(
+    100,
+    Math.round((stats.activeDaysThisWeek / 5) * 100),
+  );
+  const weekDays = stats.trendDays.slice(-7);
 
   return (
     <div className="grid gap-5">
@@ -138,37 +143,75 @@ export function DashboardHome({
               </div>
             </div>
 
-            <div className="flex flex-col justify-between gap-3 rounded-lg border bg-background p-4">
-              <div>
-                <p className="font-mono text-xs uppercase text-muted-foreground">
-                  Weekly rhythm
-                </p>
-                <p className="mt-2 text-3xl font-black">
-                  {stats.activeDaysThisWeek}/5
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  active days this week
-                </p>
+            <div className="relative overflow-hidden rounded-lg border bg-[linear-gradient(145deg,var(--background),var(--muted))] p-4">
+              <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--primary),var(--accent))]" />
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs uppercase text-muted-foreground">
+                    Weekly rhythm
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Hit 5 active days to keep the week spicy.
+                  </p>
+                </div>
+                <Badge variant={stats.activeToday ? "default" : "outline"}>
+                  {stats.activeToday ? "Today done" : "Today open"}
+                </Badge>
               </div>
-              <div className="grid grid-cols-7 gap-1">
-                {stats.trendDays.slice(-7).map((day) => (
+
+              <div className="mt-5 flex items-center gap-4">
+                <div
+                  className="grid size-24 shrink-0 place-items-center rounded-full border"
+                  style={{
+                    background: `conic-gradient(var(--primary) ${weeklyProgress}%, var(--muted) 0)`,
+                  }}
+                >
+                  <div className="grid size-18 place-items-center rounded-full border bg-card text-center">
+                    <span className="text-3xl font-black leading-none">
+                      {stats.activeDaysThisWeek}
+                    </span>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      /5 days
+                    </span>
+                  </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-lg font-black">
+                    {stats.activeDaysThisWeek >= 5
+                      ? "Weekly goal locked."
+                      : `${Math.max(0, 5 - stats.activeDaysThisWeek)} more active day${5 - stats.activeDaysThisWeek === 1 ? "" : "s"}`}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Activity = progress update or saved focus session.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-7 gap-1.5">
+                {weekDays.map((day) => (
                   <div
                     key={day.key}
-                    className="flex flex-col items-center gap-2"
+                    className="flex flex-col items-center gap-2 rounded-md border bg-card/70 p-1.5"
                     title={`${day.label}: ${day.activityCount} activities`}
                   >
                     <span
-                      className={`h-8 w-full rounded-sm border ${
-                        day.activityCount > 0 ? "bg-primary" : "bg-muted/60"
+                      className={`grid size-7 place-items-center rounded-sm text-xs font-black ${
+                        day.activityCount > 0
+                          ? "bg-primary text-primary-foreground"
+                          : day.isToday
+                            ? "border border-primary text-primary"
+                            : "bg-muted text-muted-foreground"
                       }`}
-                    />
+                    >
+                      {day.activityCount > 0 ? "ON" : day.isToday ? "!" : ""}
+                    </span>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {day.isToday ? "Now" : day.label.split(" ")[0]}
                     </span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="mt-4 rounded-md border bg-background/70 p-2 text-xs text-muted-foreground">
                 Last activity: {stats.latestActivityLabel}
               </p>
             </div>
