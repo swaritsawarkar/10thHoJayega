@@ -22,6 +22,7 @@ import {
 import type {
   Chapter,
   Exercise,
+  FocusSession,
   Note,
   Subject,
   UserProgress,
@@ -43,6 +44,8 @@ const chapterColumns =
   "id,subject_id,title,chapter_number,official_textbook_url,sort_order";
 const exerciseColumns = "id,chapter_id,title,sort_order";
 const progressColumns = "id,user_id,item_type,item_id,status,updated_at";
+const focusSessionColumns =
+  "id,user_id,mode,duration_minutes,break_minutes,goal,reflection,completed,created_at";
 const noteColumns = "id,user_id,chapter_id,content,updated_at";
 
 function ensureResult<T>(
@@ -94,6 +97,27 @@ export const getHomeworkHelpUsageCount = cache(
     }
 
     return count ?? 0;
+  },
+);
+
+export const getRecentFocusSessions = cache(
+  async (userId: string, sinceIso: string): Promise<FocusSession[]> => {
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error("Study data is not connected yet.");
+    }
+
+    const focusResult = await supabase
+      .from("focus_sessions")
+      .select(focusSessionColumns)
+      .eq("user_id", userId)
+      .gte("created_at", sinceIso)
+      .order("created_at", { ascending: false });
+
+    return ensureResult(
+      focusResult,
+      "Could not load focus sessions",
+    ) as FocusSession[];
   },
 );
 
