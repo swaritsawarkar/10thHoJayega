@@ -12,7 +12,7 @@ import {
   TimerIcon,
 } from "lucide-react";
 
-import { BrandMark } from "@/components/app/brand-mark";
+import { BrandLogo } from "@/components/app/brand-mark";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -74,8 +74,8 @@ export default function Home() {
       <header className="border-b">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-4 lg:px-6">
           <Link href="/" className="flex min-w-0 items-center gap-3">
-            <BrandMark className="shrink-0" />
-            <span className="min-w-0">
+            <BrandLogo className="h-12 w-[220px] max-w-[58vw]" />
+            <span className="sr-only">
               <span className="block truncate text-lg font-black">
                 10thHoJayega
               </span>
@@ -101,7 +101,7 @@ export default function Home() {
       <section className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-3 py-12 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:px-6 lg:py-20">
         <div className="flex min-w-0 flex-col justify-center gap-7">
           <div className="flex flex-col gap-4">
-            <BrandMark className="size-18" />
+            <BrandLogo className="h-20 w-[340px] max-w-full" />
             <h1 className="max-w-4xl text-4xl font-black leading-none tracking-normal sm:text-5xl md:text-7xl">
               10thHoJayega
             </h1>

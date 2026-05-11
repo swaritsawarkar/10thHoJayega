@@ -287,7 +287,7 @@ export function getHomeJsonLd() {
         "@id": organizationId,
         name: siteConfig.name,
         url: homeUrl,
-        logo: absoluteUrl("/icon.svg"),
+        logo: absoluteUrl("/brand-icon.png"),
       },
       {
         "@type": "WebSite",
