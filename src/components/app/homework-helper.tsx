@@ -3,6 +3,7 @@
 import {
   ChangeEvent,
   FormEvent,
+  ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -76,6 +77,199 @@ function stripOlderImages(messages: UIMessage[]) {
       ],
     };
   });
+}
+
+function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let index = 0;
+
+  while (index < text.length) {
+    const boldStart = text.indexOf("**", index);
+    const codeStart = text.indexOf("`", index);
+    const nextStarts = [boldStart, codeStart].filter((value) => value >= 0);
+    const nextStart = nextStarts.length > 0 ? Math.min(...nextStarts) : -1;
+
+    if (nextStart === -1) {
+      nodes.push(text.slice(index));
+      break;
+    }
+
+    if (nextStart > index) {
+      nodes.push(text.slice(index, nextStart));
+      index = nextStart;
+      continue;
+    }
+
+    if (boldStart === index) {
+      const end = text.indexOf("**", index + 2);
+      if (end === -1) {
+        nodes.push(text.slice(index));
+        break;
+      }
+
+      nodes.push(
+        <strong key={`${keyPrefix}-bold-${index}`}>
+          {renderInlineMarkdown(text.slice(index + 2, end), keyPrefix)}
+        </strong>,
+      );
+      index = end + 2;
+      continue;
+    }
+
+    if (codeStart === index) {
+      const end = text.indexOf("`", index + 1);
+      if (end === -1) {
+        nodes.push(text.slice(index));
+        break;
+      }
+
+      nodes.push(
+        <code
+          key={`${keyPrefix}-code-${index}`}
+          className="rounded-sm border bg-muted px-1 py-0.5 font-mono text-[0.9em]"
+        >
+          {text.slice(index + 1, end)}
+        </code>,
+      );
+      index = end + 1;
+      continue;
+    }
+  }
+
+  return nodes;
+}
+
+type AssistantMarkdownBlock =
+  | {
+      type: "paragraph";
+      text: string;
+    }
+  | {
+      type: "ordered";
+      items: string[];
+    }
+  | {
+      type: "unordered";
+      items: string[];
+    };
+
+function parseAssistantMarkdownBlocks(text: string) {
+  const blocks: AssistantMarkdownBlock[] = [];
+  let paragraphLines: string[] = [];
+  let listType: "ordered" | "unordered" | null = null;
+  let listItems: string[] = [];
+
+  function flushParagraph() {
+    if (paragraphLines.length === 0) {
+      return;
+    }
+
+    blocks.push({
+      type: "paragraph",
+      text: paragraphLines.join("\n"),
+    });
+    paragraphLines = [];
+  }
+
+  function flushList() {
+    if (!listType || listItems.length === 0) {
+      return;
+    }
+
+    blocks.push({
+      type: listType,
+      items: listItems,
+    });
+    listType = null;
+    listItems = [];
+  }
+
+  text.split("\n").forEach((line) => {
+    const trimmedLine = line.trim();
+
+    if (!trimmedLine) {
+      flushParagraph();
+      flushList();
+      return;
+    }
+
+    const orderedMatch = trimmedLine.match(/^\d+\.\s+(.+)$/);
+    const unorderedMatch = trimmedLine.match(/^[-*•]\s+(.+)$/);
+
+    if (orderedMatch) {
+      flushParagraph();
+      if (listType !== "ordered") {
+        flushList();
+        listType = "ordered";
+      }
+      listItems.push(orderedMatch[1]);
+      return;
+    }
+
+    if (unorderedMatch) {
+      flushParagraph();
+      if (listType !== "unordered") {
+        flushList();
+        listType = "unordered";
+      }
+      listItems.push(unorderedMatch[1]);
+      return;
+    }
+
+    flushList();
+    paragraphLines.push(line);
+  });
+
+  flushParagraph();
+  flushList();
+
+  return blocks;
+}
+
+function AssistantMarkdown({ text }: { text: string }) {
+  const blocks = parseAssistantMarkdownBlocks(text);
+
+  return (
+    <div className="space-y-3 break-words">
+      {blocks.map((block, blockIndex) => {
+        if (block.type === "ordered") {
+          return (
+            <ol
+              key={`ordered-${blockIndex}`}
+              className="list-decimal space-y-2 pl-5"
+            >
+              {block.items.map((item, itemIndex) => (
+                <li key={`${blockIndex}-${itemIndex}`}>
+                  {renderInlineMarkdown(item, `${blockIndex}-${itemIndex}`)}
+                </li>
+              ))}
+            </ol>
+          );
+        }
+
+        if (block.type === "unordered") {
+          return (
+            <ul
+              key={`unordered-${blockIndex}`}
+              className="list-disc space-y-1.5 pl-5"
+            >
+              {block.items.map((item, itemIndex) => (
+                <li key={`${blockIndex}-${itemIndex}`}>
+                  {renderInlineMarkdown(item, `${blockIndex}-${itemIndex}`)}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
+        return (
+          <p key={`paragraph-${blockIndex}`} className="whitespace-pre-wrap">
+            {renderInlineMarkdown(block.text, `${blockIndex}`)}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 export type HomeworkHelperProps = {
@@ -424,7 +618,12 @@ export function HomeworkHelper({
                 <div className="flex flex-col gap-3 text-sm leading-6">
                   {message.parts.map((part, index) => {
                     if (part.type === "text") {
-                      return (
+                      return message.role === "assistant" ? (
+                        <AssistantMarkdown
+                          key={`${message.id}-text-${index}`}
+                          text={part.text}
+                        />
+                      ) : (
                         <p
                           key={`${message.id}-text-${index}`}
                           className="whitespace-pre-wrap break-words"
