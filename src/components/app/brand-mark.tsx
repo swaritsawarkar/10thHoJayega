@@ -7,7 +7,7 @@ export function BrandMark({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-border/70",
+        "inline-flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md shadow-sm ring-1 ring-border/70",
         className,
       )}
     >
@@ -28,7 +28,7 @@ export function BrandLogo({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex h-14 shrink-0 items-center overflow-hidden rounded-md bg-white px-2 shadow-sm ring-1 ring-border/70",
+        "inline-flex h-14 shrink-0 items-center overflow-hidden rounded-md px-2 shadow-sm ring-1 ring-border/70",
         className,
       )}
     >
