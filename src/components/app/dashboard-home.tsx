@@ -86,6 +86,7 @@ export function DashboardHome({
   const completedSubjects = snapshot.subjectPercents.filter(
     (subject) => subject.percent === 100,
   ).length;
+  const last7Days = stats.trendDays.slice(-7);
 
   return (
     <div className="grid gap-5">
@@ -138,7 +139,7 @@ export function DashboardHome({
               </div>
             </div>
 
-            <div className="flex flex-col justify-between gap-3 rounded-lg border bg-background p-4">
+            <div className="flex flex-col justify-between gap-4 rounded-lg border bg-background p-4">
               <div>
                 <p className="font-mono text-xs uppercase text-muted-foreground">
                   Weekly rhythm
@@ -150,11 +151,11 @@ export function DashboardHome({
                   active days this week
                 </p>
               </div>
-              <div className="grid grid-cols-7 gap-1">
-                {stats.trendDays.slice(-7).map((day) => (
+              <div className="grid grid-cols-7 gap-1.5">
+                {last7Days.map((day) => (
                   <div
                     key={day.key}
-                    className="flex flex-col items-center gap-2"
+                    className="flex flex-col items-center gap-1.5"
                     title={`${day.label}: ${day.activityCount} activities`}
                   >
                     <span
@@ -162,8 +163,8 @@ export function DashboardHome({
                         day.activityCount > 0 ? "bg-primary" : "bg-muted/60"
                       }`}
                     />
-                    <span className="font-mono text-[10px] text-muted-foreground">
-                      {day.isToday ? "Now" : day.label.split(" ")[0]}
+                    <span className="text-center font-mono text-[9px] leading-tight text-muted-foreground">
+                      {day.isToday ? "Now" : day.label.substring(0, 3)}
                     </span>
                   </div>
                 ))}
