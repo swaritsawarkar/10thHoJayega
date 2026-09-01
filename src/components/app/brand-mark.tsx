@@ -12,7 +12,7 @@ export function BrandMark({ className }: { className?: string }) {
       )}
     >
       <Image
-        src="/brand-icon.png"
+        src="/brand-icon.svg"
         alt=""
         width={512}
         height={512}
@@ -33,7 +33,7 @@ export function BrandLogo({ className }: { className?: string }) {
       )}
     >
       <Image
-        src="/brand-logo.png"
+        src="/brand-logo.svg"
         alt=""
         width={1025}
         height={242}
