@@ -1,0 +1,8 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon: Checkmark Circle -->
+  <circle cx="100" cy="100" r="75" fill="#10b981"/>
+  <path d="M75 100L95 120L130 85" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Icon: Triangle accent -->
+  <path d="M140 150L170 120L170 150Z" fill="#10b981"/>
+</svg>
