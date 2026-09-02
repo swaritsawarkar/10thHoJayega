@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { LazyToaster } from "@/components/ui/lazy-toaster";
 import { siteConfig } from "@/lib/seo";
@@ -84,6 +85,7 @@ export default function RootLayout({
         />
         {children}
         <LazyToaster />
+        <SpeedInsights />
       </body>
     </html>
   );
