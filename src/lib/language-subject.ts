@@ -2,7 +2,9 @@ import type { User } from "@supabase/supabase-js";
 
 import type { Chapter, Exercise, Subject, UserProfile } from "@/types/app";
 
-export type LanguageSubject = "hindi" | "french";
+// Keep the original `hindi` value for Course A so existing profiles and
+// progress rows continue to resolve to the same subject.
+export type LanguageSubject = "hindi" | "hindi-course-b" | "french";
 
 export const LANGUAGE_SUBJECT_OPTIONS: Array<{
   value: LanguageSubject;
@@ -11,13 +13,21 @@ export const LANGUAGE_SUBJECT_OPTIONS: Array<{
 }> = [
   {
     value: "hindi",
-    label: "Hindi",
-    description: "Hindi course rows appear in your tracker and print pack.",
+    label: "Hindi Course A",
+    description:
+      "Kshitij and Kritika rows appear in your tracker and print pack.",
+  },
+  {
+    value: "hindi-course-b",
+    label: "Hindi Course B",
+    description:
+      "Sparsh and Sanchayan rows appear in your tracker and print pack.",
   },
   {
     value: "french",
     label: "French",
-    description: "French course rows replace Hindi in your tracker.",
+    description:
+      "French course rows replace your Hindi course in your tracker.",
   },
 ];
 
@@ -29,7 +39,11 @@ const coreSubjectIds = new Set([
 ]);
 
 export function toLanguageSubject(value: unknown): LanguageSubject {
-  return value === "french" ? "french" : "hindi";
+  if (value === "hindi-course-b" || value === "french") {
+    return value;
+  }
+
+  return "hindi";
 }
 
 export function getLanguageSubject(
@@ -42,7 +56,11 @@ export function getLanguageSubject(
 }
 
 export function getLanguageSubjectLabel(languageSubject: LanguageSubject) {
-  return languageSubject === "french" ? "French" : "Hindi";
+  if (languageSubject === "hindi-course-b") {
+    return "Hindi Course B";
+  }
+
+  return languageSubject === "french" ? "French" : "Hindi Course A";
 }
 
 export function isSubjectVisibleForLanguage(

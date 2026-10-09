@@ -160,27 +160,31 @@ export default function Home() {
             <GraduationCapIcon aria-hidden="true" />
           </div>
           <div className="grid gap-3">
-            {["Maths", "Science", "Social Science", "English", "Hindi"].map(
-              (subject, index) => (
-                <div
-                  key={subject}
-                  className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md border bg-background p-3"
-                >
-                  <div className="min-w-0">
-                    <p className="font-bold">{subject}</p>
-                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full bg-primary"
-                        style={{ width: `${20 + index * 13}%` }}
-                      />
-                    </div>
+            {[
+              "Maths",
+              "Science",
+              "Social Science",
+              "English",
+              "Hindi Course A / B",
+            ].map((subject, index) => (
+              <div
+                key={subject}
+                className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md border bg-background p-3"
+              >
+                <div className="min-w-0">
+                  <p className="font-bold">{subject}</p>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full bg-primary"
+                      style={{ width: `${20 + index * 13}%` }}
+                    />
                   </div>
-                  <span className="rounded-md border px-2 py-1 font-mono text-xs">
-                    {20 + index * 13}%
-                  </span>
                 </div>
-              ),
-            )}
+                <span className="rounded-md border px-2 py-1 font-mono text-xs">
+                  {20 + index * 13}%
+                </span>
+              </div>
+            ))}
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {[

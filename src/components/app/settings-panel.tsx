@@ -144,8 +144,8 @@ export function SettingsPanel({
           <Field>
             <FieldLabel>Language subject</FieldLabel>
             <FieldDescription>
-              This decides whether Hindi or French appears in dashboard,
-              subjects, textbooks, and print packs.
+              This decides whether Hindi Course A, Hindi Course B, or French
+              appears in dashboard, subjects, textbooks, and print packs.
             </FieldDescription>
             <LanguageSubjectPicker
               value={languageSubject}

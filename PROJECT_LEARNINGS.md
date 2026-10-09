@@ -12,7 +12,7 @@ The core idea was simple: students should be able to track progress online, then
 
 - A production-ready Next.js web app with protected routes.
 - Supabase email/password authentication.
-- User profiles with display names and Hindi/French language subject preference.
+- User profiles with display names and Hindi Course A, Hindi Course B, or French language subject preference.
 - Subject and chapter progress tracking.
 - Maths exercise-level progress tracking.
 - Private per-chapter notes.

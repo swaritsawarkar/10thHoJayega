@@ -13,21 +13,21 @@ export type Database = {
         Row: {
           id: string;
           display_name: string | null;
-          language_subject: "hindi" | "french";
+          language_subject: "hindi" | "hindi-course-b" | "french";
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id: string;
           display_name?: string | null;
-          language_subject?: "hindi" | "french";
+          language_subject?: "hindi" | "hindi-course-b" | "french";
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           display_name?: string | null;
-          language_subject?: "hindi" | "french";
+          language_subject?: "hindi" | "hindi-course-b" | "french";
           created_at?: string;
           updated_at?: string;
         };

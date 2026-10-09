@@ -17,7 +17,7 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 - Supabase email/password auth
 - Protected dashboard
 - Subject and chapter progress tracking
-- Hindi/French language subject preference
+- Hindi Course A, Hindi Course B, or French language subject preference
 - Maths exercise-level progress tracking
 - Private per-chapter notes
 - Focus mode with saved completed sessions
@@ -113,7 +113,7 @@ Open `supabase/schema.sql`, paste it into the Supabase SQL Editor, and run it. I
 
 Open `supabase/seed.sql`, paste it into the Supabase SQL Editor, and run it. The seed data is sample data and must be verified against official CBSE/NCERT curriculum before production use.
 
-For existing Supabase projects created before Hindi/French support, also run `supabase/update-language-subject.sql`. It adds the profile preference and French tracker rows without touching user progress.
+For existing Supabase projects, run `supabase/update-hindi-course-b.sql`. It adds Hindi Course B without changing existing Course A or French progress.
 
 For existing projects created before AI Homework Help, run `supabase/update-homework-help.sql`. It adds usage counting only; it does not store prompts or AI answers.
 

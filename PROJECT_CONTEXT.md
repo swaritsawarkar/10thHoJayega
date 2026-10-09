@@ -22,7 +22,7 @@ Class 10 students often need one place to see what is left, what is revised, wha
 - Protected dashboard with progress summary.
 - Subject and chapter progress tracking.
 - Maths exercise-level progress tracking.
-- Hindi/French language subject preference.
+- Hindi Course A, Hindi Course B, or French language subject preference.
 - Private per-chapter notes.
 - Pomodoro focus mode.
 - Feynman technique helper.
@@ -84,7 +84,7 @@ The tutor should explain steps, give hints, and ask for clearer input when the q
 
 Supabase stores:
 
-- `profiles`: user display name and Hindi/French language subject preference.
+- `profiles`: user display name and Hindi Course A, Hindi Course B, or French language subject preference.
 - `subjects`: sample subject rows.
 - `chapters`: sample chapter rows and official textbook URL fields.
 - `exercises`: sample Maths exercise rows.

@@ -26,7 +26,7 @@ export function LanguageSubjectPicker({
     : LANGUAGE_SUBJECT_OPTIONS;
 
   return (
-    <div className="grid gap-2 sm:grid-cols-3" role="radiogroup">
+    <div className="grid gap-2 sm:grid-cols-2" role="radiogroup">
       {options.map((option) => {
         const checked = value === option.value;
 

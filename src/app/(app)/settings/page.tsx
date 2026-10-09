@@ -30,7 +30,8 @@ async function SettingsContent() {
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Edit your display name, export progress, or reset only your own
-          progress rows. Pick Hindi or French here too.
+          progress rows. Pick Hindi Course A, Hindi Course B, or French here
+          too.
         </p>
       </section>
       <SettingsPanel

@@ -1,21 +1,6 @@
--- Adds Hindi Course A, Hindi Course B, and French profile preferences for existing projects.
--- Course B rows follow the official CBSE Class X 2026-27 curriculum and NCERT books.
+-- Adds Hindi Course B without changing existing Hindi Course A or French progress.
 
 begin;
-
-alter table public.profiles
-add column if not exists language_subject text;
-
-update public.profiles
-set language_subject = 'hindi'
-where language_subject is null
-  or language_subject not in ('hindi', 'hindi-course-b', 'french');
-
-alter table public.profiles
-alter column language_subject set default 'hindi';
-
-alter table public.profiles
-alter column language_subject set not null;
 
 alter table public.profiles
 drop constraint if exists profiles_language_subject_check;
@@ -58,57 +43,11 @@ $$;
 insert into public.subjects (id, name, description, sort_order)
 values
   ('hindi', 'Hindi Course A', 'NCERT Kshitij and Kritika reading tracker for Hindi Course A.', 50),
-  ('hindi-course-b', 'Hindi Course B', 'NCERT Sparsh and Sanchayan reading tracker for Hindi Course B.', 51),
-  ('french', 'French', 'CBSE Entre Jeunes Class 10 culture-and-civilisation lesson tracker.', 50)
+  ('hindi-course-b', 'Hindi Course B', 'NCERT Sparsh and Sanchayan reading tracker for Hindi Course B.', 51)
 on conflict (id) do update set
   name = excluded.name,
   description = excluded.description,
   sort_order = excluded.sort_order;
-
-drop table if exists pg_temp.current_hindi_course_b_chapter_ids;
-
-create temporary table current_hindi_course_b_chapter_ids (
-  id text primary key
-) on commit drop;
-
-insert into current_hindi_course_b_chapter_ids (id)
-values
-  ('hindi-course-b-sparsh-kabir-sakhi'),
-  ('hindi-course-b-sparsh-meera-pad'),
-  ('hindi-course-b-sparsh-manushyata'),
-  ('hindi-course-b-sparsh-parvat-pradesh-pawas'),
-  ('hindi-course-b-sparsh-top'),
-  ('hindi-course-b-sparsh-kar-chale-hum-fida'),
-  ('hindi-course-b-sparsh-atmatran'),
-  ('hindi-course-b-sparsh-bade-bhai-sahab'),
-  ('hindi-course-b-sparsh-diary-ka-ek-panna'),
-  ('hindi-course-b-sparsh-tatara-vamiro-katha'),
-  ('hindi-course-b-sparsh-shailendra'),
-  ('hindi-course-b-sparsh-doosre-ke-dukh'),
-  ('hindi-course-b-sparsh-patjhar-mein-tooti-pattiyan'),
-  ('hindi-course-b-sparsh-kartoos'),
-  ('hindi-course-b-sanchayan-harihar-kaka'),
-  ('hindi-course-b-sanchayan-sapnon-ke-se-din'),
-  ('hindi-course-b-sanchayan-topi-shukla');
-
-delete from public.progress
-using public.chapters
-where public.progress.item_type = 'chapter'
-  and public.progress.item_id = public.chapters.id
-  and public.chapters.subject_id = 'hindi-course-b'
-  and not exists (
-    select 1
-    from current_hindi_course_b_chapter_ids
-    where current_hindi_course_b_chapter_ids.id = public.chapters.id
-  );
-
-delete from public.chapters
-where public.chapters.subject_id = 'hindi-course-b'
-  and not exists (
-    select 1
-    from current_hindi_course_b_chapter_ids
-    where current_hindi_course_b_chapter_ids.id = public.chapters.id
-  );
 
 insert into public.chapters (id, subject_id, title, chapter_number, official_textbook_url, sort_order)
 values
@@ -129,59 +68,6 @@ values
   ('hindi-course-b-sanchayan-harihar-kaka', 'hindi-course-b', 'मिथिलेश्वर - हरिहर काका', 1, 'https://ncert.nic.in/textbook/pdf/jhsy1ps.pdf', 591),
   ('hindi-course-b-sanchayan-sapnon-ke-se-din', 'hindi-course-b', 'गुरदयाल सिंह - सपनों के-से दिन', 2, 'https://ncert.nic.in/textbook/pdf/jhsy1ps.pdf', 592),
   ('hindi-course-b-sanchayan-topi-shukla', 'hindi-course-b', 'राही मासूम रज़ा - टोपी शुक्ला', 3, 'https://ncert.nic.in/textbook/pdf/jhsy1ps.pdf', 593)
-on conflict (id) do update set
-  subject_id = excluded.subject_id,
-  title = excluded.title,
-  chapter_number = excluded.chapter_number,
-  official_textbook_url = excluded.official_textbook_url,
-  sort_order = excluded.sort_order;
-
-drop table if exists pg_temp.current_french_chapter_ids;
-
-create temporary table current_french_chapter_ids (
-  id text primary key
-) on commit drop;
-
-insert into current_french_chapter_ids (id)
-values
-  ('french-apres-le-bac'),
-  ('french-chercher-travail'),
-  ('french-plaisir-lire'),
-  ('french-les-medias'),
-  ('french-chacun-ses-gouts'),
-  ('french-en-pleine-forme'),
-  ('french-lenvironnement'),
-  ('french-vive-la-republique');
-
-delete from public.progress
-using public.chapters
-where public.progress.item_type = 'chapter'
-  and public.progress.item_id = public.chapters.id
-  and public.chapters.subject_id = 'french'
-  and not exists (
-    select 1
-    from current_french_chapter_ids
-    where current_french_chapter_ids.id = public.chapters.id
-  );
-
-delete from public.chapters
-where public.chapters.subject_id = 'french'
-  and not exists (
-    select 1
-    from current_french_chapter_ids
-    where current_french_chapter_ids.id = public.chapters.id
-  );
-
-insert into public.chapters (id, subject_id, title, chapter_number, official_textbook_url, sort_order)
-values
-  ('french-apres-le-bac', 'french', 'Après le bac', 2, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 512),
-  ('french-chercher-travail', 'french', 'Chercher du travail', 3, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 513),
-  ('french-plaisir-lire', 'french', 'Le plaisir de lire', 4, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 514),
-  ('french-les-medias', 'french', 'Les médias', 5, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 515),
-  ('french-chacun-ses-gouts', 'french', 'Chacun ses goûts', 6, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 516),
-  ('french-en-pleine-forme', 'french', 'En pleine forme', 7, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 517),
-  ('french-lenvironnement', 'french', 'L''environnement', 8, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 518),
-  ('french-vive-la-republique', 'french', 'Vive la République!', 10, 'https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf', 520)
 on conflict (id) do update set
   subject_id = excluded.subject_id,
   title = excluded.title,

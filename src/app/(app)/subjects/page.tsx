@@ -39,8 +39,8 @@ async function SubjectsContent() {
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Maths, Science, Social Science, English, and {languageSubjectLabel}{" "}
-          are ready to track. Switch Hindi/French in settings if your school
-          cooked the timetable differently.
+          are ready to track. Switch your language subject in settings if your
+          school cooked the timetable differently.
         </p>
       </section>
 

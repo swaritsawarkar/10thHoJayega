@@ -181,6 +181,43 @@ const chapterSectionsBySubject: Record<string, ChapterSection[]> = {
       ],
     },
   ],
+  "hindi-course-b": [
+    {
+      id: "sparsh-kavya",
+      title: "Sparsh - Kavya Khand",
+      chapterIds: [
+        "hindi-course-b-sparsh-kabir-sakhi",
+        "hindi-course-b-sparsh-meera-pad",
+        "hindi-course-b-sparsh-manushyata",
+        "hindi-course-b-sparsh-parvat-pradesh-pawas",
+        "hindi-course-b-sparsh-top",
+        "hindi-course-b-sparsh-kar-chale-hum-fida",
+        "hindi-course-b-sparsh-atmatran",
+      ],
+    },
+    {
+      id: "sparsh-gadya",
+      title: "Sparsh - Gadya Khand",
+      chapterIds: [
+        "hindi-course-b-sparsh-bade-bhai-sahab",
+        "hindi-course-b-sparsh-diary-ka-ek-panna",
+        "hindi-course-b-sparsh-tatara-vamiro-katha",
+        "hindi-course-b-sparsh-shailendra",
+        "hindi-course-b-sparsh-doosre-ke-dukh",
+        "hindi-course-b-sparsh-patjhar-mein-tooti-pattiyan",
+        "hindi-course-b-sparsh-kartoos",
+      ],
+    },
+    {
+      id: "sanchayan",
+      title: "Sanchayan",
+      chapterIds: [
+        "hindi-course-b-sanchayan-harihar-kaka",
+        "hindi-course-b-sanchayan-sapnon-ke-se-din",
+        "hindi-course-b-sanchayan-topi-shukla",
+      ],
+    },
+  ],
 };
 
 const subjectSupportNotes: Record<string, string> = {

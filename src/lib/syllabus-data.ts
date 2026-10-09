@@ -6,6 +6,7 @@ export const MANAGED_SYLLABUS_SUBJECT_IDS = new Set([
   "social-science",
   "english",
   "hindi",
+  "hindi-course-b",
   "french",
 ]);
 
@@ -19,6 +20,8 @@ const firstFlightUrl = "https://ncert.nic.in/textbook/pdf/jeff1ps.pdf";
 const footprintsUrl = "https://ncert.nic.in/textbook/pdf/jefp1ps.pdf";
 const kshitijUrl = "https://ncert.nic.in/textbook/pdf/jhks1ps.pdf";
 const kritikaUrl = "https://ncert.nic.in/textbook/pdf/jhkr1ps.pdf";
+const sparshUrl = "https://ncert.nic.in/textbook/pdf/jhsp1ps.pdf";
+const sanchayanUrl = "https://ncert.nic.in/textbook/pdf/jhsy1ps.pdf";
 const frenchUrl =
   "https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/French_Sec_2025-26.pdf";
 
@@ -53,10 +56,17 @@ export const canonicalSubjects: Subject[] = [
   },
   {
     id: "hindi",
-    name: "Hindi",
+    name: "Hindi Course A",
     description:
       "NCERT Kshitij and Kritika reading tracker for Hindi Course A.",
     sort_order: 50,
+  },
+  {
+    id: "hindi-course-b",
+    name: "Hindi Course B",
+    description:
+      "NCERT Sparsh and Sanchayan reading tracker for Hindi Course B.",
+    sort_order: 51,
   },
   {
     id: "french",
@@ -722,6 +732,143 @@ export const canonicalChapters: Chapter[] = [
     3,
     kritikaUrl,
     543,
+  ),
+
+  chapter(
+    "hindi-course-b-sparsh-kabir-sakhi",
+    "hindi-course-b",
+    "कबीर - साखी",
+    1,
+    sparshUrl,
+    571,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-meera-pad",
+    "hindi-course-b",
+    "मीरा - पद",
+    2,
+    sparshUrl,
+    572,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-manushyata",
+    "hindi-course-b",
+    "मैथिलीशरण गुप्त - मनुष्यता",
+    3,
+    sparshUrl,
+    573,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-parvat-pradesh-pawas",
+    "hindi-course-b",
+    "सुमित्रानंदन पंत - पर्वत प्रदेश में पावस",
+    4,
+    sparshUrl,
+    574,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-top",
+    "hindi-course-b",
+    "वीरेन डंगवाल - तोप",
+    5,
+    sparshUrl,
+    575,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-kar-chale-hum-fida",
+    "hindi-course-b",
+    "कैफ़ी आज़मी - कर चले हम फ़िदा",
+    6,
+    sparshUrl,
+    576,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-atmatran",
+    "hindi-course-b",
+    "रवींद्रनाथ ठाकुर - आत्मत्राण",
+    7,
+    sparshUrl,
+    577,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-bade-bhai-sahab",
+    "hindi-course-b",
+    "प्रेमचंद - बड़े भाई साहब",
+    8,
+    sparshUrl,
+    581,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-diary-ka-ek-panna",
+    "hindi-course-b",
+    "सीताराम सेकसरिया - डायरी का एक पन्ना",
+    9,
+    sparshUrl,
+    582,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-tatara-vamiro-katha",
+    "hindi-course-b",
+    "लीलाधर मंडलोई - तताँरा-वामीरो कथा",
+    10,
+    sparshUrl,
+    583,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-shailendra",
+    "hindi-course-b",
+    "प्रह्लाद अग्रवाल - तीसरी कसम के शिल्पकार शैलेंद्र",
+    11,
+    sparshUrl,
+    584,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-doosre-ke-dukh",
+    "hindi-course-b",
+    "निदा फ़ाज़ली - अब कहाँ दूसरे के दुख से दुखी होने वाले",
+    12,
+    sparshUrl,
+    585,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-patjhar-mein-tooti-pattiyan",
+    "hindi-course-b",
+    "रवींद्र केलेकर - पतझर में टूटी पत्तियाँ",
+    13,
+    sparshUrl,
+    586,
+  ),
+  chapter(
+    "hindi-course-b-sparsh-kartoos",
+    "hindi-course-b",
+    "हबीब तनवीर - कारतूस",
+    14,
+    sparshUrl,
+    587,
+  ),
+  chapter(
+    "hindi-course-b-sanchayan-harihar-kaka",
+    "hindi-course-b",
+    "मिथिलेश्वर - हरिहर काका",
+    1,
+    sanchayanUrl,
+    591,
+  ),
+  chapter(
+    "hindi-course-b-sanchayan-sapnon-ke-se-din",
+    "hindi-course-b",
+    "गुरदयाल सिंह - सपनों के-से दिन",
+    2,
+    sanchayanUrl,
+    592,
+  ),
+  chapter(
+    "hindi-course-b-sanchayan-topi-shukla",
+    "hindi-course-b",
+    "राही मासूम रज़ा - टोपी शुक्ला",
+    3,
+    sanchayanUrl,
+    593,
   ),
 
   chapter("french-apres-le-bac", "french", "Après le bac", 2, frenchUrl, 512),

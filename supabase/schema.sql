@@ -12,7 +12,7 @@ create table if not exists public.profiles (
   language_subject text not null default 'hindi',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint profiles_language_subject_check check (language_subject in ('hindi', 'french'))
+  constraint profiles_language_subject_check check (language_subject in ('hindi', 'hindi-course-b', 'french'))
 );
 
 alter table public.profiles
@@ -21,7 +21,7 @@ add column if not exists language_subject text;
 update public.profiles
 set language_subject = 'hindi'
 where language_subject is null
-  or language_subject not in ('hindi', 'french');
+  or language_subject not in ('hindi', 'hindi-course-b', 'french');
 
 alter table public.profiles
 alter column language_subject set default 'hindi';
@@ -29,20 +29,12 @@ alter column language_subject set default 'hindi';
 alter table public.profiles
 alter column language_subject set not null;
 
-do $$
-begin
-  if not exists (
-    select 1
-    from pg_constraint
-    where conname = 'profiles_language_subject_check'
-      and conrelid = 'public.profiles'::regclass
-  ) then
-    alter table public.profiles
-    add constraint profiles_language_subject_check
-    check (language_subject in ('hindi', 'french'));
-  end if;
-end;
-$$;
+alter table public.profiles
+drop constraint if exists profiles_language_subject_check;
+
+alter table public.profiles
+add constraint profiles_language_subject_check
+check (language_subject in ('hindi', 'hindi-course-b', 'french'));
 
 create table if not exists public.subjects (
   id text primary key,
@@ -149,7 +141,7 @@ declare
 begin
   preferred_name := nullif(new.raw_user_meta_data ->> 'display_name', '');
   preferred_language := case
-    when new.raw_user_meta_data ->> 'language_subject' in ('hindi', 'french')
+    when new.raw_user_meta_data ->> 'language_subject' in ('hindi', 'hindi-course-b', 'french')
       then new.raw_user_meta_data ->> 'language_subject'
     else 'hindi'
   end;

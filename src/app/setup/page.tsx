@@ -41,7 +41,10 @@ export default function SetupPage() {
           <ol className="mt-4 flex list-decimal flex-col gap-4 pl-5">
             <li>Turn on account sign in and private progress saving.</li>
             <li>Load the Class 10 subjects, chapters, and exercises.</li>
-            <li>Enable Hindi or French based on your school language.</li>
+            <li>
+              Enable Hindi Course A, Hindi Course B, or French based on your
+              school language.
+            </li>
             <li>Turn on Homework Help if you want the tutor chat available.</li>
             <li>Restart the site after the private settings are in place.</li>
             <li>

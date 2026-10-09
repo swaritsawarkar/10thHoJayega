@@ -67,7 +67,13 @@ export const publicSeoPages = [
     intro:
       "10thHoJayega helps Class 10 students see every subject, chapter, revision status, and next study step without turning planning into another subject.",
     previewTitle: "Subject progress snapshot",
-    previewRows: ["Maths", "Science", "Social Science", "English", "Hindi"],
+    previewRows: [
+      "Maths",
+      "Science",
+      "Social Science",
+      "English",
+      "Hindi Course A / B",
+    ],
     highlights: [
       "Mark chapters as not started, in progress, revised, mastered, or board-ready.",
       "Open NCERT textbook links from the tracker when a chapter needs reading.",

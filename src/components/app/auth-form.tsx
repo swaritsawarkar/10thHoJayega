@@ -264,8 +264,8 @@ export function AuthForm() {
             <Field>
               <FieldLabel>Language subject</FieldLabel>
               <FieldDescription>
-                Keep your saved Hindi/French choice, or switch it after typing
-                your credentials.
+                Keep your saved language-subject choice, or switch it after
+                typing your credentials.
               </FieldDescription>
               <LanguageSubjectPicker
                 value={loginLanguageSelection}

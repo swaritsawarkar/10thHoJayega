@@ -8,6 +8,8 @@ const cleanSubjectDescriptions: Record<string, string> = {
     "History, Geography, Civics, and Economics progress from the NCERT books.",
   english: "NCERT First Flight and Footprints Without Feet literature tracker.",
   hindi: "NCERT Kshitij and Kritika reading tracker for Hindi Course A.",
+  "hindi-course-b":
+    "NCERT Sparsh and Sanchayan reading tracker for Hindi Course B.",
   french: "CBSE Entre Jeunes Class 10 culture-and-civilisation lesson tracker.",
   optional: "School-specific optional subject tracker.",
 };

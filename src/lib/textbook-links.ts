@@ -57,7 +57,7 @@ export const officialResourceLinks = [
   },
   {
     subjectId: "hindi",
-    subject: "Hindi",
+    subject: "Hindi Course A",
     links: [
       {
         label: "NCERT Textbooks browser",
@@ -66,6 +66,20 @@ export const officialResourceLinks = [
       {
         label: "NCERT eBooks page",
         href: "https://www.ncert.nic.in/textbooks.php?ln=en",
+      },
+    ],
+  },
+  {
+    subjectId: "hindi-course-b",
+    subject: "Hindi Course B",
+    links: [
+      {
+        label: "Sparsh Part 2",
+        href: "https://ncert.nic.in/textbook.php?jhsp1=0-17",
+      },
+      {
+        label: "Sanchayan Part 2",
+        href: "https://ncert.nic.in/textbook.php?jhsy1=0-3",
       },
     ],
   },
