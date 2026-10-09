@@ -12,7 +12,6 @@ import {
   TimerIcon,
 } from "lucide-react";
 
-import { BrandLogo } from "@/components/app/brand-mark";
 import { PublicHeader } from "@/components/marketing/public-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,12 +72,11 @@ export default function Home() {
       />
       <PublicHeader />
 
-      <section className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-3 py-12 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:px-6 lg:py-20">
-        <div className="flex min-w-0 flex-col justify-center gap-7">
+      <section className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-3 py-10 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:px-6 lg:py-14">
+        <div className="flex min-w-0 flex-col gap-7">
           <div className="flex flex-col gap-4">
-            <BrandLogo className="h-20 w-[340px] max-w-full" />
-            <h1 className="max-w-4xl text-4xl font-black leading-none tracking-normal sm:text-5xl md:text-7xl">
-              10thHoJayega
+            <h1 className="max-w-4xl text-4xl font-black leading-[0.95] tracking-normal sm:text-5xl md:text-7xl">
+              Class 10 CBSE syllabus tracker, without the chaos.
             </h1>
             <p className="max-w-2xl text-xl font-bold sm:text-2xl">
               10th ka syllabus. Sorted. Printed. Tracked. Ho jayega.

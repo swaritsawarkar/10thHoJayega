@@ -17,7 +17,7 @@ export function PublicHeader() {
 
         <nav
           aria-label="Public study tools"
-          className="hidden min-w-0 items-center gap-1 xl:flex"
+          className="hidden min-w-0 items-center gap-1 2xl:flex"
         >
           {publicNavigation.map((item) => (
             <Link
