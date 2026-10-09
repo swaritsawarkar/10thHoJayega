@@ -12,6 +12,7 @@ import {
   MessageCircleQuestionIcon,
   PrinterIcon,
   SettingsIcon,
+  ShieldIcon,
   TimerIcon,
 } from "lucide-react";
 
@@ -33,14 +34,18 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
-export function NavLinks() {
+export function NavLinks({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
-  const [optimisticPathname, setOptimisticPathname] =
-    useOptimistic(pathname);
+  const [optimisticPathname, setOptimisticPathname] = useOptimistic(pathname);
 
   return (
     <nav className="-mx-1 flex min-w-0 max-w-full gap-1 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 xl:flex-1 xl:justify-center">
-      {navItems.map((item) => {
+      {[
+        ...navItems,
+        ...(isAdmin
+          ? [{ href: "/admin", label: "Admin", icon: ShieldIcon }]
+          : []),
+      ].map((item) => {
         const Icon = item.icon;
         const isActive =
           optimisticPathname === item.href ||

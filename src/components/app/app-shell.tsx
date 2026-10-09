@@ -6,14 +6,16 @@ export function AppShell({
   children,
   displayName,
   email,
+  isAdmin,
 }: {
   children: ReactNode;
   displayName: string;
   email: string;
+  isAdmin: boolean;
 }) {
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,var(--background),var(--muted))]">
-      <Navbar displayName={displayName} email={email} />
+      <Navbar displayName={displayName} email={email} isAdmin={isAdmin} />
       <main className="mx-auto w-full max-w-7xl min-w-0 px-3 py-5 sm:px-4 lg:px-6">
         {children}
       </main>

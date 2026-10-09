@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { AppShell } from "@/components/app/app-shell";
 import { requireUser } from "@/lib/auth";
+import { isAdminUser } from "@/lib/admin";
 import { getDisplayName } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
@@ -25,9 +26,14 @@ export default async function ProtectedLayout({
       ? user.user_metadata.display_name
       : null;
   const displayName = getDisplayName(user.email, metadataDisplayName);
+  const isAdmin = await isAdminUser(user.id);
 
   return (
-    <AppShell displayName={displayName} email={user.email ?? "student"}>
+    <AppShell
+      displayName={displayName}
+      email={user.email ?? "student"}
+      isAdmin={isAdmin}
+    >
       {children}
     </AppShell>
   );

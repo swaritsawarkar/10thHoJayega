@@ -8,9 +8,11 @@ import { ThemeToggle } from "@/components/app/theme-toggle";
 export function Navbar({
   displayName,
   email,
+  isAdmin,
 }: {
   displayName: string;
   email: string;
+  isAdmin: boolean;
 }) {
   return (
     <header className="no-print sticky top-0 z-40 overflow-x-clip border-b bg-background/95 backdrop-blur">
@@ -38,7 +40,7 @@ export function Navbar({
           </div>
         </div>
 
-        <NavLinks />
+        <NavLinks isAdmin={isAdmin} />
 
         <div className="hidden items-center gap-3 xl:flex">
           <div className="max-w-40 text-right text-xs">
