@@ -236,6 +236,29 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <footer className="border-t">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-muted-foreground lg:px-6">
+          Built by{" "}
+          <a
+            href="https://sawarkarswarit.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-foreground underline underline-offset-4"
+          >
+            Swarit Sawarkar
+          </a>
+          {". "}
+          <a
+            href="https://sawarkarswarit.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            View portfolio
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
