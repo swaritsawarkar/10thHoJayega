@@ -18,6 +18,10 @@ function normalizeSiteUrl(url: string) {
 
 export const siteConfig = {
   name: "10thHoJayega",
+  creator: {
+    name: "Swarit Sawarkar",
+    url: "https://sawarkarswarit.netlify.app",
+  },
   shortName: "10thHoJayega",
   description:
     "Class 10 CBSE syllabus tracker for chapters, revision, Maths exercises, official NCERT textbook links, Hindi Course A/B, and printable study checklists.",
@@ -380,6 +384,16 @@ export function getHomeJsonLd() {
         name: siteConfig.name,
         url: homeUrl,
         logo: absoluteUrl("/brand-icon.png"),
+        founder: {
+          "@id": `${homeUrl}#creator`,
+        },
+      },
+      {
+        "@type": "Person",
+        "@id": `${homeUrl}#creator`,
+        name: siteConfig.creator.name,
+        url: siteConfig.creator.url,
+        sameAs: [siteConfig.creator.url],
       },
       {
         "@type": "WebSite",
@@ -390,6 +404,9 @@ export function getHomeJsonLd() {
         inLanguage: "en-IN",
         publisher: {
           "@id": organizationId,
+        },
+        creator: {
+          "@id": `${homeUrl}#creator`,
         },
       },
       {
@@ -419,6 +436,9 @@ export function getHomeJsonLd() {
         ],
         publisher: {
           "@id": organizationId,
+        },
+        creator: {
+          "@id": `${homeUrl}#creator`,
         },
       },
     ],
