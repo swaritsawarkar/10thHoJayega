@@ -23,7 +23,7 @@ import {
 } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Class 10 Syllabus Tracker",
+  title: "10thHoJayega: Class 10 CBSE Syllabus Tracker",
   description: siteConfig.description,
 };
 
@@ -84,9 +84,9 @@ export default function Home() {
               10th ka syllabus. Sorted. Printed. Tracked. Ho jayega.
             </p>
             <p className="max-w-2xl text-lg text-muted-foreground">
-              A Class 10 syllabus tracker built for students who need progress
-              tracking, printable checklists, and official NCERT links in one
-              place.
+              A free Class 10 CBSE syllabus tracker built for students who need
+              chapter progress, Hindi Course A/B, printable checklists, and
+              official NCERT links in one place.
             </p>
             <p className="font-mono text-sm text-muted-foreground">
               Progress saves after login.

@@ -20,7 +20,7 @@ export const siteConfig = {
   name: "10thHoJayega",
   shortName: "10thHoJayega",
   description:
-    "Class 10 CBSE and NCERT syllabus tracker with progress tracking, Maths exercise status, focus mode, official textbook links, and printable study checklists.",
+    "Class 10 CBSE syllabus tracker for chapters, revision, Maths exercises, official NCERT textbook links, Hindi Course A/B, and printable study checklists.",
   url: normalizeSiteUrl(
     process.env.NEXT_PUBLIC_SITE_URL ??
       process.env.VERCEL_PROJECT_PRODUCTION_URL ??
@@ -138,14 +138,14 @@ export const publicSeoPages = [
   },
   {
     slug: "class-10-syllabus-tracker",
-    title: "Class 10 Syllabus Tracker",
+    title: "Free Class 10 CBSE Syllabus Tracker",
     description:
-      "Track Class 10 CBSE and NCERT chapters, revision status, Maths exercises, textbook links, and printable study checklists in one student-friendly planner.",
-    keyword: "Class 10 syllabus tracker",
-    h1: "Class 10 syllabus tracker for CBSE students",
+      "Use a free Class 10 CBSE syllabus tracker to mark chapters, revision, Maths exercises, Hindi Course A/B, official NCERT links, and printable checklists.",
+    keyword: "Class 10 CBSE syllabus tracker",
+    h1: "Free Class 10 CBSE syllabus tracker for chapters and revision",
     eyebrow: "Syllabus tracker",
     intro:
-      "10thHoJayega helps Class 10 students see every subject, chapter, revision status, and next study step without turning planning into another subject.",
+      "10thHoJayega is a browser-based Class 10 CBSE syllabus tracker. Keep every subject, chapter, revision status, and next study step in one place without downloading another app.",
     previewTitle: "Subject progress snapshot",
     previewRows: [
       "Maths",
@@ -157,6 +157,7 @@ export const publicSeoPages = [
     highlights: [
       "Mark chapters as not started, in progress, revised, mastered, or board-ready.",
       "Open NCERT textbook links from the tracker when a chapter needs reading.",
+      "Choose Hindi Course A or Hindi Course B so your language chapters stay accurate.",
       "Print a checklist when studying offline feels easier than another screen.",
     ],
     faqs: [
@@ -169,6 +170,11 @@ export const publicSeoPages = [
         question: "Can I use it without installing an app?",
         answer:
           "Yes. 10thHoJayega runs in the browser and can be used from a phone, tablet, or computer.",
+      },
+      {
+        question: "Does the tracker include Hindi Course A and Hindi Course B?",
+        answer:
+          "Yes. Pick Hindi Course A or Hindi Course B when you log in, and the tracker shows the matching language chapters and textbook links.",
       },
     ],
     priority: 0.95,
@@ -339,7 +345,7 @@ export function getSeoLandingPageMetadata(page: SeoLandingPage): Metadata {
   return {
     title: page.title,
     description: page.description,
-    keywords: [page.keyword, ...siteConfig.keywords],
+    keywords: [...new Set([page.keyword, ...siteConfig.keywords])],
     alternates: {
       canonical: `/${page.slug}`,
     },
