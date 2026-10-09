@@ -34,6 +34,9 @@ export const siteConfig = {
     "Class 10 printable checklist",
     "Maths exercise tracker",
     "Class 10 focus timer",
+    "how to track Class 10 syllabus",
+    "CBSE Class 10 syllabus checklist",
+    "10th syllabus planner",
   ],
 } as const;
 
@@ -52,10 +55,78 @@ export type SeoLandingPage = {
     question: string;
     answer: string;
   }[];
+  steps?: {
+    title: string;
+    description: string;
+  }[];
   priority: number;
 };
 
 export const publicSeoPages = [
+  {
+    slug: "how-to-track-class-10-syllabus",
+    title: "How to Track Your Class 10 Syllabus",
+    description:
+      "Learn how to track your Class 10 CBSE syllabus chapter by chapter with a simple checklist for study, revision, practice, and board preparation.",
+    keyword: "how to track Class 10 syllabus",
+    h1: "How to track your Class 10 syllabus without losing chapters",
+    eyebrow: "Class 10 syllabus checklist",
+    intro:
+      "A syllabus feels impossible when every chapter lives in a different notebook, PDF, or group chat. Put the full list in one tracker, update it after each study session, and use the next unfinished chapter as your plan.",
+    previewTitle: "Simple syllabus tracking routine",
+    previewRows: [
+      "List every subject",
+      "Add each chapter",
+      "Mark today’s progress",
+      "Schedule revision",
+      "Check board readiness",
+    ],
+    highlights: [
+      "Keep first-time study, revision, and confidence separate so a read chapter does not look finished too early.",
+      "Use official NCERT textbook links in the tracker when you need the source material.",
+      "Print a checklist for quick weekly reviews away from your screen.",
+    ],
+    steps: [
+      {
+        title: "Start with the full subject list",
+        description:
+          "Add every Class 10 subject and its chapters before deciding what to study today. A complete list prevents chapters from disappearing between school, tuition, and self-study.",
+      },
+      {
+        title: "Give each chapter an honest status",
+        description:
+          "Use a simple status such as not started, in progress, revised, mastered, or board-ready. Reading a chapter once is not the same as revising or practising it.",
+      },
+      {
+        title: "Choose one next chapter",
+        description:
+          "After every session, leave yourself one clear next action: finish an exercise, revise a weak topic, or open the next chapter. That removes the daily what-do-I-study-now problem.",
+      },
+      {
+        title: "Update progress after studying",
+        description:
+          "Make the update part of finishing a study block. A tracker only helps when it reflects the work you actually completed.",
+      },
+      {
+        title: "Review the checklist every week",
+        description:
+          "Use the subject view or a printed checklist to spot chapters that need revision before they become last-minute surprises.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the easiest way to track Class 10 syllabus?",
+        answer:
+          "Use one chapter-by-chapter checklist for every subject, update it after each study block, and mark revision separately from first-time study.",
+      },
+      {
+        question: "Should I track revision separately?",
+        answer:
+          "Yes. A chapter can be completed but still need revision and practice. Separate statuses make weak areas visible before exams.",
+      },
+    ],
+    priority: 0.9,
+  },
   {
     slug: "class-10-syllabus-tracker",
     title: "Class 10 Syllabus Tracker",
@@ -372,6 +443,22 @@ export function getSeoLandingPageJsonLd(page: SeoLandingPage) {
           },
         })),
       },
+      ...(page.steps
+        ? [
+            {
+              "@type": "HowTo",
+              "@id": `${pageUrl}#how-to`,
+              name: page.h1,
+              description: page.description,
+              step: page.steps.map((step, position) => ({
+                "@type": "HowToStep",
+                position: position + 1,
+                name: step.title,
+                text: step.description,
+              })),
+            },
+          ]
+        : []),
     ],
   };
 }

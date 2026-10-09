@@ -154,6 +154,34 @@ export function SeoLandingPage({ page }: { page: SeoLandingPage }) {
         <TrackerPreview page={page} />
       </section>
 
+      {page.steps ? (
+        <section className="border-t">
+          <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
+            <div className="max-w-3xl">
+              <p className="font-mono text-xs uppercase text-muted-foreground">
+                A practical routine
+              </p>
+              <h2 className="mt-2 text-3xl font-black">
+                A simple way to keep the syllabus visible
+              </h2>
+            </div>
+            <ol className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {page.steps.map((step, index) => (
+                <li key={step.title} className="border bg-card p-4">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    Step {index + 1}
+                  </span>
+                  <h3 className="mt-3 font-black">{step.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {step.description}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      ) : null}
+
       <section className="border-y bg-muted/20">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 lg:grid-cols-[0.8fr_1fr] lg:px-6">
           <div>

@@ -11,6 +11,7 @@ const privateRoutes = [
   "/print",
   "/printable-pack",
   "/settings",
+  "/admin",
 ];
 
 export default function robots(): MetadataRoute.Robots {
