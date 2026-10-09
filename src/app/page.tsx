@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { BrandLogo } from "@/components/app/brand-mark";
-import { ThemeToggle } from "@/components/app/theme-toggle";
+import { PublicHeader } from "@/components/marketing/public-header";
 import { Button } from "@/components/ui/button";
 import {
   getHomeJsonLd,
@@ -71,32 +71,7 @@ export default function Home() {
           __html: serializeJsonLd(jsonLd),
         }}
       />
-      <header className="border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-4 lg:px-6">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <BrandLogo className="h-12 w-[220px] max-w-[58vw]" />
-            <span className="sr-only">
-              <span className="block truncate text-lg font-black">
-                10thHoJayega
-              </span>
-              <span className="block truncate font-mono text-xs text-muted-foreground">
-                10th ka syllabus. Sorted.
-              </span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle compact />
-            <Button
-              render={<Link href="/login" />}
-              aria-label="Start tracking"
-              className="hidden sm:inline-flex"
-            >
-              Start tracking
-              <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-3 py-12 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:px-6 lg:py-20">
         <div className="flex min-w-0 flex-col justify-center gap-7">

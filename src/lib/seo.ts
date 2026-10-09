@@ -40,6 +40,15 @@ export const siteConfig = {
   ],
 } as const;
 
+export const publicNavigation = [
+  { slug: "class-10-syllabus-tracker", label: "Tracker" },
+  { slug: "cbse-class-10-study-planner", label: "Planner" },
+  { slug: "ncert-class-10-checklist", label: "NCERT checklist" },
+  { slug: "class-10-maths-exercise-tracker", label: "Maths" },
+  { slug: "printable-class-10-study-planner", label: "Print planner" },
+  { slug: "how-to-track-class-10-syllabus", label: "How it works" },
+] as const;
+
 export type SeoLandingPage = {
   slug: string;
   title: string;
@@ -430,6 +439,24 @@ export function getSeoLandingPageJsonLd(page: SeoLandingPage) {
           name: siteConfig.name,
           url: homeUrl,
         },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: homeUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: page.title,
+            item: pageUrl,
+          },
+        ],
       },
       {
         "@type": "FAQPage",

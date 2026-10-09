@@ -9,14 +9,12 @@ import {
   SearchIcon,
 } from "lucide-react";
 
-import { BrandLogo } from "@/components/app/brand-mark";
-import { ThemeToggle } from "@/components/app/theme-toggle";
+import { PublicHeader } from "@/components/marketing/public-header";
 import { Button } from "@/components/ui/button";
 import {
   getSeoLandingPageJsonLd,
   publicSeoPages,
   serializeJsonLd,
-  siteConfig,
   type SeoLandingPage,
 } from "@/lib/seo";
 
@@ -81,32 +79,18 @@ export function SeoLandingPage({ page }: { page: SeoLandingPage }) {
           __html: serializeJsonLd(jsonLd),
         }}
       />
-      <header className="border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-4 lg:px-6">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <BrandLogo className="h-12 w-[220px] max-w-[58vw]" />
-            <span className="sr-only">
-              <span className="block truncate text-lg font-black">
-                {siteConfig.name}
-              </span>
-              <span className="block truncate font-mono text-xs text-muted-foreground">
-                Class 10 study tracker
-              </span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle compact />
-            <Button
-              render={<Link href="/login" />}
-              aria-label="Start tracking"
-              className="hidden sm:inline-flex"
-            >
-              Start tracking
-              <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
+
+      <nav
+        aria-label="Breadcrumb"
+        className="mx-auto flex max-w-7xl items-center gap-2 px-4 pt-5 text-sm text-muted-foreground lg:px-6"
+      >
+        <Link href="/" className="hover:text-foreground hover:underline">
+          Home
+        </Link>
+        <span aria-hidden="true">/</span>
+        <span className="truncate text-foreground">{page.title}</span>
+      </nav>
 
       <section className="mx-auto grid w-full max-w-7xl gap-10 px-3 py-12 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.88fr)] lg:px-6 lg:py-18">
         <div className="flex min-w-0 flex-col justify-center gap-7">
