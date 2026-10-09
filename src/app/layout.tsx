@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: [...siteConfig.keywords],
-  authors: [{ name: siteConfig.name }],
-  creator: siteConfig.name,
+  authors: [{ name: siteConfig.creator.name, url: siteConfig.creator.url }],
+  creator: siteConfig.creator.name,
   publisher: siteConfig.name,
   alternates: {
     canonical: "/",
