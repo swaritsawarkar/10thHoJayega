@@ -52,7 +52,7 @@ export default async function AdminPage() {
     redirect("/dashboard");
   }
 
-  const { summary, students } = await getAdminDashboard();
+  const { summary, students, activity } = await getAdminDashboard();
   const summaryCards = [
     {
       label: "Total users",
@@ -182,6 +182,58 @@ export default async function AdminPage() {
                     colSpan={5}
                   >
                     No profiles yet.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="overflow-hidden rounded-lg border bg-card">
+        <div className="border-b p-5">
+          <h2 className="text-2xl font-black">Recent activity</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The latest 100 progress updates, focus sessions, and homework-help
+            requests.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px] text-left text-sm">
+            <thead className="border-b bg-muted/40 text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-5 py-3 font-medium">Student</th>
+                <th className="px-5 py-3 font-medium">Activity</th>
+                <th className="px-5 py-3 font-medium">Detail</th>
+                <th className="px-5 py-3 font-medium">When</th>
+              </tr>
+            </thead>
+            <tbody>
+              {activity.map((entry) => (
+                <tr key={entry.id} className="border-b last:border-0">
+                  <td className="px-5 py-4">
+                    <p className="font-semibold">{entry.student}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {entry.email ?? "No email available"}
+                    </p>
+                  </td>
+                  <td className="px-5 py-4 font-medium">{entry.kind}</td>
+                  <td className="px-5 py-4 text-muted-foreground">
+                    {entry.detail || "—"}
+                  </td>
+                  <td className="px-5 py-4">
+                    {formatDateTime(entry.occurredAt)}
+                  </td>
+                </tr>
+              ))}
+              {activity.length === 0 ? (
+                <tr>
+                  <td
+                    className="px-5 py-10 text-center text-muted-foreground"
+                    colSpan={4}
+                  >
+                    No activity recorded yet.
                   </td>
                 </tr>
               ) : null}

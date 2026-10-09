@@ -335,11 +335,32 @@ begin
   end if;
 
   with activity as (
-    select user_id, updated_at as occurred_at from public.progress
+    select
+      user_id,
+      updated_at as occurred_at,
+      id::text as id,
+      'Progress update'::text as kind,
+      ('Status set to ' || status)::text as detail
+    from public.progress
     union all
-    select user_id, created_at as occurred_at from public.focus_sessions
+    select
+      user_id,
+      created_at as occurred_at,
+      id::text as id,
+      'Focus session'::text as kind,
+      (
+        duration_minutes || ' minutes' ||
+        case when completed is true then ' completed' else ' saved' end
+      )::text as detail
+    from public.focus_sessions
     union all
-    select user_id, created_at as occurred_at from public.homework_help_usage
+    select
+      user_id,
+      created_at as occurred_at,
+      id::text as id,
+      'Homework help request'::text as kind,
+      coalesce(subject_id, 'General question')::text as detail
+    from public.homework_help_usage
   ),
   activity_by_user as (
     select user_id, max(occurred_at) as last_activity_at
@@ -365,6 +386,20 @@ begin
     left join activity_by_user on activity_by_user.user_id = profile.id
     left join progress_by_user on progress_by_user.user_id = profile.id
     order by profile.created_at desc
+    limit 1000
+  ),
+  recent_activity as (
+    select
+      activity.id,
+      coalesce(nullif(profile.display_name, ''), auth_user.email, 'Unnamed student') as student,
+      auth_user.email,
+      activity.kind,
+      activity.detail,
+      activity.occurred_at
+    from activity
+    join public.profiles as profile on profile.id = activity.user_id
+    join auth.users as auth_user on auth_user.id = activity.user_id
+    order by activity.occurred_at desc
     limit 100
   )
   select jsonb_build_object(
@@ -412,6 +447,23 @@ begin
           order by created_at desc
         )
         from students
+      ),
+      '[]'::jsonb
+    ),
+    'activity', coalesce(
+      (
+        select jsonb_agg(
+          jsonb_build_object(
+            'id', id,
+            'student', student,
+            'email', email,
+            'kind', kind,
+            'detail', detail,
+            'occurredAt', occurred_at
+          )
+          order by occurred_at desc
+        )
+        from recent_activity
       ),
       '[]'::jsonb
     )

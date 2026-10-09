@@ -24,6 +24,16 @@ export type AdminStudent = {
 export type AdminDashboard = {
   summary: AdminSummary;
   students: AdminStudent[];
+  activity: AdminActivity[];
+};
+
+export type AdminActivity = {
+  id: string;
+  student: string;
+  email: string | null;
+  kind: string;
+  detail: string;
+  occurredAt: string;
 };
 
 const emptySummary: AdminSummary = {
@@ -57,6 +67,7 @@ function parseDashboard(value: unknown): AdminDashboard {
   const root = asRecord(value);
   const rawSummary = asRecord(root?.summary);
   const rawStudents = Array.isArray(root?.students) ? root.students : [];
+  const rawActivity = Array.isArray(root?.activity) ? root.activity : [];
 
   return {
     summary: {
@@ -90,6 +101,26 @@ function parseDashboard(value: unknown): AdminDashboard {
         },
       ];
     }),
+    activity: rawActivity.flatMap((rawActivityEntry) => {
+      const activityEntry = asRecord(rawActivityEntry);
+      const id = asString(activityEntry?.id);
+      const occurredAt = asString(activityEntry?.occurredAt);
+
+      if (!id || !occurredAt) {
+        return [];
+      }
+
+      return [
+        {
+          id,
+          student: asString(activityEntry?.student) ?? "Unnamed student",
+          email: asString(activityEntry?.email),
+          kind: asString(activityEntry?.kind) ?? "Activity",
+          detail: asString(activityEntry?.detail) ?? "",
+          occurredAt,
+        },
+      ];
+    }),
   };
 }
 
@@ -111,7 +142,7 @@ export const isAdminUser = cache(async (userId: string) => {
 export const getAdminDashboard = cache(async (): Promise<AdminDashboard> => {
   const supabase = await createClient();
   if (!supabase) {
-    return { summary: emptySummary, students: [] };
+    return { summary: emptySummary, students: [], activity: [] };
   }
 
   const { data, error } = await supabase.rpc("get_admin_dashboard");
