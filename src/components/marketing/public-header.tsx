@@ -9,9 +9,9 @@ import { publicNavigation, siteConfig } from "@/lib/seo";
 export function PublicHeader() {
   return (
     <header className="border-b">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-4 sm:px-4 lg:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-4 lg:px-6">
         <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
-          <BrandLogo className="h-12 w-[220px] max-w-[45vw]" />
+          <BrandLogo className="h-10 max-w-[calc(100vw-5rem)] sm:h-11 sm:max-w-none" />
           <span className="sr-only">{siteConfig.name}</span>
         </Link>
 

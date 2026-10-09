@@ -35,7 +35,7 @@ export function BrandLogo({ className }: { className?: string }) {
       <Image
         src="/brand-logo.svg"
         alt=""
-        width={1025}
+        width={1170}
         height={242}
         className="h-full w-auto object-contain"
         draggable={false}
