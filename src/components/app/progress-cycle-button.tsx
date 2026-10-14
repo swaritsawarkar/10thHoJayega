@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2Icon,
@@ -10,11 +10,7 @@ import {
 
 import { getNextStatus, STATUS_LABELS } from "@/lib/progress";
 import { Button } from "@/components/ui/button";
-import {
-  getBrowserSupabase,
-  notifyError,
-  notifySuccess,
-} from "@/lib/client-effects";
+import { notifyError, notifySuccess } from "@/lib/client-effects";
 import type { ProgressItemType, ProgressStatus } from "@/types/app";
 
 const nextActionLabels: Record<ProgressStatus, string> = {
@@ -26,7 +22,6 @@ const nextActionLabels: Record<ProgressStatus, string> = {
 };
 
 export function ProgressCycleButton({
-  userId,
   itemType,
   itemId,
   initialStatus,
@@ -45,6 +40,8 @@ export function ProgressCycleButton({
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
   const [isSaving, setIsSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [, startRefresh] = useTransition();
   const nextStatus = getNextStatus(status);
   const itemLabel = itemType === "chapter" ? "chapter" : "exercise";
@@ -58,6 +55,9 @@ export function ProgressCycleButton({
         : CheckCircle2Icon;
 
   async function handleClick() {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setSaveFailed(false);
     const previousStatus = status;
     setStatus(nextStatus);
     setIsSaving(true);
@@ -65,25 +65,19 @@ export function ProgressCycleButton({
     let error: { message: string } | null = null;
 
     try {
-      const supabase = await getBrowserSupabase();
-      const result = await supabase.from("progress").upsert(
-        {
-          user_id: userId,
-          item_type: itemType,
-          item_id: itemId,
-          status: nextStatus,
-        },
-        { onConflict: "user_id,item_type,item_id" },
-      );
-      error = result.error;
+      const { saveProgress } = await import("@/lib/actions/progress");
+      const result = await saveProgress(itemType, itemId, nextStatus);
+      error = result.error ? { message: result.error } : null;
     } catch {
       error = { message: "Unexpected save failure" };
     } finally {
       setIsSaving(false);
+      savingRef.current = false;
     }
 
     if (error) {
       setStatus(previousStatus);
+      setSaveFailed(true);
       void notifyError("Save failed. Reverted the status.");
       return;
     }
@@ -108,6 +102,16 @@ export function ProgressCycleButton({
         <Icon data-icon="inline-start" aria-hidden="true" />
         {isSaving ? "Saving" : actionLabel}
       </Button>
+      <p
+        role="status"
+        className={`text-xs ${saveFailed ? "text-destructive" : "text-muted-foreground"}`}
+      >
+        {isSaving
+          ? "Syncing to your account..."
+          : saveFailed
+            ? "Not saved. Click again to retry."
+            : "Synced to your account"}
+      </p>
       {showHint && (
         <p className="max-w-48 text-xs leading-snug text-muted-foreground">
           Current: {STATUS_LABELS[status]}. Click to set{" "}

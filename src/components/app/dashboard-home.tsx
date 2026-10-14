@@ -41,10 +41,10 @@ const quickActions = [
     helper: "Ask a doubt",
   },
   {
-    href: "/print",
+    href: "/planner",
     label: "Planner",
     icon: CalendarDaysIcon,
-    helper: "Print today",
+    helper: "Plan today",
   },
   {
     href: "/printable-pack",
