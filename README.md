@@ -16,6 +16,8 @@ Students can track syllabus progress in Supabase, then print a personalized chec
 
 - Supabase email/password auth
 - Protected dashboard
+- Account-synced daily targets, calendar, overdue list, and revision overview
+- Optional target reminders while the dashboard or daily planner is open
 - Subject and chapter progress tracking
 - Hindi Course A, Hindi Course B, or French language subject preference
 - Maths exercise-level progress tracking
@@ -116,6 +118,12 @@ Open `supabase/seed.sql`, paste it into the Supabase SQL Editor, and run it. The
 For existing Supabase projects, run `supabase/update-hindi-course-b.sql`. It adds Hindi Course B without changing existing Course A or French progress.
 
 For existing projects created before AI Homework Help, run `supabase/update-homework-help.sql`. It adds usage counting only; it does not store prompts or AI answers.
+
+For existing projects, run `supabase/update-study-targets.sql` to enable the daily planner. Fresh projects get this table from `supabase/schema.sql`. Targets are private to each account and included in Settings exports. Completing a target does not change chapter mastery. Reminders use the device's local time and run only while `/planner` or `/dashboard` is open; they are not background push notifications.
+
+The daily planner is `/planner`; `/print` remains the printable planner. Revision counts use existing saved chapter statuses: started, revised at least once, and confident (Mastered or Board Ready). The practice list shows started or revised chapters that are not yet mastered.
+
+Progress writes authenticate on the server, confirm the persisted row, then invalidate the app layout so dashboard and subject pages refresh with the saved state. Failed writes show an inline retry message.
 
 ## Local Run Commands
 
