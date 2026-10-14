@@ -82,7 +82,23 @@ export function SettingsPanel({
     });
   }
 
-  function exportProgress() {
+  async function exportProgress() {
+    let savedProgress = progress;
+    let studyTargets;
+    try {
+      const supabase = await getBrowserSupabase();
+      const [progressResult, targetResult] = await Promise.all([
+        supabase.from("progress").select("*").eq("user_id", userId),
+        supabase.from("study_targets").select("*").eq("user_id", userId),
+      ]);
+      if (progressResult.error || targetResult.error)
+        throw new Error("Export sync failed");
+      savedProgress = progressResult.data ?? [];
+      studyTargets = targetResult.data ?? [];
+    } catch {
+      void notifyError("Could not sync your export. Try again when connected.");
+      return;
+    }
     const payload = {
       exported_at: new Date().toISOString(),
       user: {
@@ -91,7 +107,8 @@ export function SettingsPanel({
         display_name: displayName || null,
         language_subject: languageSubject,
       },
-      progress,
+      progress: savedProgress,
+      study_targets: studyTargets,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: "application/json",

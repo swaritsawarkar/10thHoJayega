@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { BookOpenIcon } from "lucide-react";
 
 import { DashboardHome } from "@/components/app/dashboard-home";
+import { StudyPlanner } from "@/components/app/study-planner";
+import { RevisionOverview } from "@/components/app/revision-overview";
 import { EmptyState } from "@/components/app/empty-state";
 import { LoadingState } from "@/components/app/loading-state";
 import { ProgressSummary } from "@/components/app/progress-summary";
@@ -83,6 +85,8 @@ async function DashboardContent() {
           />
 
           <ProgressSummary snapshot={snapshot} />
+          <StudyPlanner userId={user.id} chapters={chapters} compact />
+          <RevisionOverview chapters={chapters} progress={progress} />
 
           <section>
             <div className="mb-4 flex items-center gap-2">
