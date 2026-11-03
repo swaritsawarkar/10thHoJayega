@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { PublicHeader } from "@/components/marketing/public-header";
+import { PublicChapterChecklist } from "@/components/marketing/public-chapter-checklist";
 import { Button } from "@/components/ui/button";
 import {
   getHomeJsonLd,
@@ -104,10 +105,10 @@ export default function Home() {
               size="lg"
               variant="outline"
               className="w-full sm:w-fit"
-              render={<Link href="/printable-pack" />}
+              render={<Link href="#try-checklist" />}
             >
-              Generate printable pack
-              <PrinterIcon data-icon="inline-end" aria-hidden="true" />
+              Try free checklist
+              <ListChecksIcon data-icon="inline-end" aria-hidden="true" />
             </Button>
           </div>
 
@@ -174,6 +175,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <PublicChapterChecklist />
 
       <section className="border-t bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
