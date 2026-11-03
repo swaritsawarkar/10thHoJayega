@@ -110,19 +110,19 @@ export function SeoLandingPage({ page }: { page: SeoLandingPage }) {
             <Button
               size="lg"
               className="w-full sm:w-fit"
-              render={<Link href="/login" />}
+              render={<Link href="/#try-checklist" />}
             >
-              Start tracking
+              Try the free checklist
               <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="w-full sm:w-fit"
-              render={<Link href="/" />}
+              render={<Link href="/login" />}
             >
               <HomeIcon data-icon="inline-start" aria-hidden="true" />
-              View homepage
+              Open full tracker
             </Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
