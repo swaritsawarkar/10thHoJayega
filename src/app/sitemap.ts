@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { absoluteUrl, publicSeoPages } from "@/lib/seo";
 
-const lastModified = new Date("2026-11-03T00:00:00.000Z");
+const lastModified = new Date("2026-10-09T00:00:00.000Z");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
